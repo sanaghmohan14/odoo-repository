@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- from view  creation-->
+    <record id="vehicle_service_management_view_form" model="ir.ui.view">
+        <field name="name">vehicle.service.management.view.form</field>
+        <field name="model">vechicle.service</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name=""
+                    <field name="state" widget="statusbar" options="{'clickable':'1'}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id" widget="res_partner_many2one"
+                                   context="{'show_address': 1}"
+                                   options='{"always_reload": True}'/>
+                            <field name="mobile_number"/>
+                            <field name="vechicle_no" duplicate="False"/>
+                            <field name="advisor_id"/>
+                            <field name="company_id"/>
+                        </group>
+                        <group>
+
+                            <field name="vechicle_image" widget="image" options='{"size": [100, 100]}'/>/>
+                            <field name="vechicle_type"/>
+                            <field name="vehicle_model" domain="[('category_id', '=',vechicle_type)]"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="service_type"/>
+                            <field name="start_date"/>
+                            <field name="duration"/>
+                            <field name="end_date"/>
+                            <field name="estimated_amount"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="customer complaint">
+                            <p>
+                                Add customer complaint here
+                                <field name="customer_compliant"/>
+                            </p>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <!-- tree view for from -->
+    <record id="vehicle_service_management_tree_views" model="ir.ui.view">
+        <field name="name">vehicle.service.management.view.form</field>
+        <field name="model">vechicle.service</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="partner_id"/>
+                <field name="end_date"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

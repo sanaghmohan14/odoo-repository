@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="vehicle_tag_form" model="ir.ui.view">
+        <field name="name">vehicle.tag.form</field>
+        <field name="model">vehicle.tag</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="color" eval="1" required="True" widget="color_picker"/>
+
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="vehicle_tag_tree" model="ir.ui.view">
+        <field name="name">vehicle.tag.form</field>
+        <field name="model">vehicle.tag</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="color" eval="1" required="True" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+</odoo>
