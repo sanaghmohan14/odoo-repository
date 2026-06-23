@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="model_category_bmx" model="fleet.vehicle.model.category">
+        <field name="name">xy</field>
+
+    </record>
+
+    <record id="model_category_bmx" model="fleet.vehicle.model.category">
+        <field name="name">sports coupe</field>
+
+    </record>
+
+    <record id="model_category_bmx" model="fleet.vehicle.model.category">
+        <field name="name">sports car</field>
+    </record>
+
+</odoo>

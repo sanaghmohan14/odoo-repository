@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+        <!--    reference-->
+
+        <record id="vehicle_service_reference" model="ir.sequence">
+            <field name="name">vehicle reference</field>
+            <field name="code">vehicle.reference</field>
+            <field name="prefix">VS</field>
+            <field name="padding">2</field>
+            <field name="number_increment">1</field>
+
+        </record>
+    </data>
+</odoo>
