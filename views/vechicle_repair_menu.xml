@@ -1,27 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-
     <menuitem id="menu_vechicle_service_management_root" name="vechicle repair  management"></menuitem>
 
-    <record id="action_vechicle_repair_management" model="ir.actions.act_window">
-
-        <field name="name">vechicle service</field>
-        <field name="res_model">vechicle.service</field>
-        <field name="view_mode">list,form</field>
-    </record>
 
     <menuitem id="menu_vechicle_service_management_vechicle" name="vehicle repair"
               parent="menu_vechicle_service_management_root" action="action_vechicle_repair_management"></menuitem>
 
-    <record id="action_vehicle_tag" model="ir.actions.act_window">
-
-        <field name="name">vehicle tag</field>
-        <field name="res_model">vehicle.tag</field>
-        <field name="view_mode">list,form</field>
-    </record>
 
     <menuitem id="menu_vehicle_tag" name="vehicle tag" parent="menu_vechicle_service_management_root"
               action="action_vehicle_tag"/>
+
+
+<!--    <menuitem id="menu_vehicle_category" name="vehicle category"  parent="menu_vechicle_service_management_root" action="action_vehicle_category"/>-->
 
 </odoo>
