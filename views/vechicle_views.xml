@@ -1,37 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <record id="action_vechicle_repair_management" model="ir.actions.act_window">
+
+        <field name="name">vechicle service</field>
+        <field name="res_model">vechicle.service</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
     <!-- from view  creation-->
     <record id="vehicle_service_management_view_form" model="ir.ui.view">
         <field name="name">vehicle.service.management.view.form</field>
+
         <field name="model">vechicle.service</field>
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name=""
+                    <button string="confirm" type="object" name="action_confirm" invisible="state not in ['draft']"/>
                     <field name="state" widget="statusbar" options="{'clickable':'1'}"/>
                 </header>
                 <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button class="oe_stat_button"
+                                    type="object" icon="fa-bars" name="action_service_history">
+                                <div class="o_stat_info">
+                                        <field name="service_history"/>
+                                           <span class="o_stat_value">SERVICE HISTORY
+                                </span>
+                                </div>
+                            </button>
+
+                    </div>
+                    <group>
+                        <h2>
+                            <field name="name" readonly="1"/>
+                        </h2>
+                    </group>
                     <group>
                         <group>
+
                             <field name="partner_id" widget="res_partner_many2one"
                                    context="{'show_address': 1}"
-                                   options='{"always_reload": True}'/>
-                            <field name="mobile_number"/>
-                            <field name="vechicle_no" duplicate="False"/>
-                            <field name="advisor_id"/>
-                            <field name="company_id"/>
+                                   options='{"always_reload": True}' readonly="state not in ['draft']"/>
+                            <field name="mobile_number" readonly="state not in ['draft']"/>
+                            <field name="vechicle_no" required="True" readonly="state not in ['draft']"/>
+                            <field name="advisor_id" readonly="state not in ['draft']"/>
+                            <field name="company_id" readonly="state not in ['draft']"/>
+                            <field name="service_tag" widget="many2many_tags"/>
+
                         </group>
                         <group>
 
-                            <field name="vechicle_image" widget="image" options='{"size": [100, 100]}'/>/>
+                            <field name="vechicle_image" widget="image" options='{"size": [100, 100]}'
+                                   readonly="state not in ['draft']"/>/>
                             <field name="vechicle_type"/>
-                            <field name="vehicle_model" domain="[('category_id', '=',vechicle_type)]"/>
-                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                            <field name="service_type"/>
-                            <field name="start_date"/>
+                            <field name="vehicle_model" domain="[('category_id', '=',vechicle_type)]"
+                                   readonly="state not in ['draft']"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"
+                                   readonly="state not in ['draft']"/>
+                            <field name="service_type" readonly="state not in ['draft']"/>
+                            <field name="start_date" readonly="state not in ['draft']"/>
                             <field name="duration"/>
-                            <field name="end_date"/>
-                            <field name="estimated_amount"/>
+                            <field name="end_date" readonly="state not in ['draft']"/>
+                            <field name="estimated_amount" readonly="state not in ['draft']"/>
                         </group>
                     </group>
                     <notebook>
@@ -41,7 +73,32 @@
                                 <field name="customer_compliant"/>
                             </p>
                         </page>
+                           <page string="labor details">
+                           <form>
+                               <group>
+                                   <field name="labor_name"/>
+                                   <field name="employee_assigned_to_labor"/>
+                                   <field name="hourly_cost"/>
+                                   <field name="hours_spent"/>
+                                   <field name="sub_total_amount"/>
+                               </group>
+                           </form>
+                        </page>
+
+
+                           <page string="consumed parts details">
+                           <form>
+                               <group>
+                                   <field name="product_id"/>
+                                   <field name="quantity"/>
+                                   <field name="unit_price"/>
+                                   <field name="sub_total_price"/>
+                               </group>
+                           </form>
+                        </page>
+
                     </notebook>
+
                 </sheet>
                 <chatter/>
             </form>
@@ -57,6 +114,33 @@
                 <field name="end_date"/>
                 <field name="state"/>
             </list>
+        </field>
+    </record>
+
+        <record id="vehicle_service_management_search_views" model="ir.ui.view">
+        <field name="name">vehicle.service.management.view.search</field>
+        <field name="model">vechicle.service</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="vechicle_type"/>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="vechicle_no"/>
+                <field name="advisor_id"/>
+                <field name="employee_assigned_to_labor"/>
+                <filter name="state" string="filter by state" />
+                <filter name="state" string="filter by draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="state" string="filter by inprogress" domain="[('state', '=', 'inprogress')]"/>
+                <filter name="state" string="filter by cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <filter name="state" string="filter by ready" domain="[('state', '=', 'ready')]"/>
+
+                <filter name="group_by_customer" string="customer" context="{'group_by':'partner_id'}"/>
+                <filter name="group_by_state" string="state" context="{'group_by':'state'}"/>
+                <filter name="group_by_vechicle_type" string="vehicle_type" context="{'group_by':'vechicle_type'}"/>
+                <filter name="group_by_vechicle_type" string="vehicle_type" context="{'group_by':'employee_assigned_to_labor'}"/>
+
+            </search>
         </field>
     </record>
 
