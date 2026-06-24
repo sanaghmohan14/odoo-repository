@@ -3,3 +3,7 @@ vechicle_repair_management.access_vechicle_service,access_vechicle_service,vechi
 
 vechicle_repair_management.access_vehicle_tag,access_vehicle_tag,vechicle_repair_management.model_vehicle_tag,base.group_user,1,0,0,0
 
+vechicle_repair_management.access_repair_parts,access_repair_parts,vechicle_repair_management.model_repair_parts,base.group_user,1,0,0,0
+
+vechicle_repair_management.access_labor_details,access_labor_details,vechicle_repair_management.model_labor_details,base.group_user,1,0,0,0
+

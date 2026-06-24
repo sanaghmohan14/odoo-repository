@@ -23,13 +23,13 @@
                 <sheet>
                     <div name="button_box" class="oe_button_box">
                         <button class="oe_stat_button"
-                                    type="object" icon="fa-bars" name="action_service_history">
-                                <div class="o_stat_info">
-                                        <field name="service_history"/>
-                                           <span class="o_stat_value">SERVICE HISTORY
+                                type="object" icon="fa-bars" name="action_service_history">
+                            <div class="o_stat_info">
+                                <field name="service_history"/>
+                                <span class="o_stat_value">SERVICE HISTORY
                                 </span>
-                                </div>
-                            </button>
+                            </div>
+                        </button>
 
                     </div>
                     <group>
@@ -47,7 +47,7 @@
                             <field name="vechicle_no" required="True" readonly="state not in ['draft']"/>
                             <field name="advisor_id" readonly="state not in ['draft']"/>
                             <field name="company_id" readonly="state not in ['draft']"/>
-                            <field name="service_tag" widget="many2many_tags"/>
+                            <field name="service_tag" widget="many2many_tags" options="{'color_field': 'color'}"/>
 
                         </group>
                         <group>
@@ -73,29 +73,41 @@
                                 <field name="customer_compliant"/>
                             </p>
                         </page>
-                           <page string="labor details">
-                           <form>
-                               <group>
-                                   <field name="labor_name"/>
-                                   <field name="employee_assigned_to_labor"/>
-                                   <field name="hourly_cost"/>
-                                   <field name="hours_spent"/>
-                                   <field name="sub_total_amount"/>
-                               </group>
-                           </form>
+                        <page string="labor details" >
+                            <form>
+                                <field name="labor_working_details" >
+                                    <list editable="bottom">
+                                        <field name="labor_name"/>
+                                        <field name="employee_assigned_to_labor"/>
+                                        <field name="hourly_cost"/>
+                                        <field name="hours_spent"/>
+                                        <field name="sub_total_amount"/>
+                                        <field name="total_one"/>
+                                    </list>
+                                </field>
+                                  </form>
+
                         </page>
 
 
-                           <page string="consumed parts details">
-                           <form>
+                        <page string="consumed parts details">
+                            <form>
+                                <field name="consumed_parts">
+                                            <list editable="bottom">
+                                                <field name="product_id"/>
+                                                <field name="quantity"/>
+                                                <field name="unit_price"/>
+                                                <field name="sub_total_price"/>
+                                            </list>
+                                </field>
+
+                            </form>
                                <group>
-                                   <field name="product_id"/>
-                                   <field name="quantity"/>
-                                   <field name="unit_price"/>
-                                   <field name="sub_total_price"/>
-                               </group>
-                           </form>
+                                    <field name="total"/>
+                                </group>
+
                         </page>
+
 
                     </notebook>
 
@@ -117,7 +129,7 @@
         </field>
     </record>
 
-        <record id="vehicle_service_management_search_views" model="ir.ui.view">
+    <record id="vehicle_service_management_search_views" model="ir.ui.view">
         <field name="name">vehicle.service.management.view.search</field>
         <field name="model">vechicle.service</field>
         <field name="arch" type="xml">
@@ -129,7 +141,7 @@
                 <field name="vechicle_no"/>
                 <field name="advisor_id"/>
                 <field name="employee_assigned_to_labor"/>
-                <filter name="state" string="filter by state" />
+                <filter name="state" string="filter by state"/>
                 <filter name="state" string="filter by draft" domain="[('state', '=', 'draft')]"/>
                 <filter name="state" string="filter by inprogress" domain="[('state', '=', 'inprogress')]"/>
                 <filter name="state" string="filter by cancelled" domain="[('state', '=', 'cancelled')]"/>
@@ -138,7 +150,8 @@
                 <filter name="group_by_customer" string="customer" context="{'group_by':'partner_id'}"/>
                 <filter name="group_by_state" string="state" context="{'group_by':'state'}"/>
                 <filter name="group_by_vechicle_type" string="vehicle_type" context="{'group_by':'vechicle_type'}"/>
-                <filter name="group_by_vechicle_type" string="vehicle_type" context="{'group_by':'employee_assigned_to_labor'}"/>
+                <filter name="group_by_vechicle_type" string="vehicle_type"
+                        context="{'group_by':'employee_assigned_to_labor'}"/>
 
             </search>
         </field>

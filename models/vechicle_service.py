@@ -4,6 +4,7 @@ from PIL.ImageChops import duplicate
 from isodate import duration
 from openpyxl.worksheet import related
 
+from addons.web.controllers import action
 from odoo import fields,models,api
 from odoo . fields import Domain
 from odoo import fields, models,api
@@ -32,24 +33,15 @@ class VechicleService(models.Model):
     name = fields.Char(string='', readonly=True ,default='New')
     service_tag=fields.Many2many('service.tag',string="service tags")
 
-
-    # labor
-
-    labor_name=fields.Many2one('res.partner',string="Labor")
+    # # labor
+    labor_working_details=fields.One2many('labor.details','labor_details_id')
     employee_assigned_to_labor=fields.Many2one('res.users',string="manager of labor")
-    # working_schedule=fields.Many2one('resource.calender')
+    consumed_parts=fields.One2many('repair.parts','consumed_parts_id')
 
-    hourly_cost=fields.Float(string="hourly cost of employee")
-    hours_spent=fields.Float(string="hours spent")
-    sub_total_amount=fields.Float(string="sub total amount",compute='employee_cost')
+    service_history=fields.Char(string="service history",action="action_service_history")
 
-   #consumed parts
-
-    product_id=fields.Many2one('product.product',string="consumed parts")
-    quantity=fields.Float(string="quantity")
-    unit_price=fields.Float(related='product_id.list_price')
-    sub_total_price=fields.Float(string="sub total price" ,compute='total_price')
-    service_history=fields.Char(string="service history")
+    total = fields.Float(string="Total", compute='total_amount')
+    total_one=fields.Float(string="Total",compute='labor_total')
 
 
     def action_confirm(self):
@@ -67,7 +59,7 @@ class VechicleService(models.Model):
     def action_service_history(self):
         return {
             'type': 'ir.actions.act_window',
-            'name':'service_history',
+            'name':'service.history',
             'res_model':'vechicle.service',
             'domain':[('partner_id','=',self.partner_id.id)],
             'view_mode':'list,form',
@@ -75,18 +67,16 @@ class VechicleService(models.Model):
 
         }
 
-
-    @api.depends('quantity','unit_price')
-    def total_price(self):
-        for record in self:
-                record.sub_total_price = record.unit_price * record.quantity if record.quantity else record.unit_price
-
-
-    @api.depends('hourly_cost','hours_spent')
-    def employee_cost(self):
+    @api.depends('consumed_parts.sub_total_price')
+    def total_amount(self):
         for i in self:
-            i.sub_total_amount=i.hourly_cost*i.hours_spent if i.hourly_cost else i.hours_spent
+            i.total=sum(i.consumed_parts.mapped('sub_total_price'))
 
+
+    @api.depends('labor_working_details.sub_total_amount')
+    def labor_total(self):
+        for j in self:
+            j.total_one=sum(j.labor_working_details.mapped('sub_total_amount'))
 
 
 

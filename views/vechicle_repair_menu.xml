@@ -12,6 +12,8 @@
               action="action_vehicle_tag"/>
 
 
+
+
 <!--    <menuitem id="menu_vehicle_category" name="vehicle category"  parent="menu_vechicle_service_management_root" action="action_vehicle_category"/>-->
 
 </odoo>

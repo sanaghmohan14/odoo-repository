@@ -10,6 +10,7 @@
     'auto_install': True,
     'depends': ["mail"],
     'data': ["security/ir.model.access.csv",
+             # "views/customer.xml",
              "data/reference.xml",
              "data/demo.xml",
              "views/vehicle_tags.xml",
