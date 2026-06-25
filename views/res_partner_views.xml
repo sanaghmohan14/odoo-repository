@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="view_res_partner_move" model="ir.ui.view">
+        <field name="name">res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+
+<!--                     <div name="button_box" class="oe_button_box">-->
+                        <button class="oe_stat_button"
+                                type="object" icon="fa-wrench" name="action_service_history_1">
+                            <div class="o_stat_info">
+
+                                 <field name="repairs_count"/>
+                                 <field name="service_historys" widget="statinfo" string="service history"/>
+
+                            </div>
+                        </button>
+<!--                     </div>-->
+
+            </xpath>
+        </field>
+    </record>
+</odoo>

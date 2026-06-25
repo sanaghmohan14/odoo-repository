@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import fields,models
 
 class VehicleTag(models.Model):
     _name = 'vehicle.tag'

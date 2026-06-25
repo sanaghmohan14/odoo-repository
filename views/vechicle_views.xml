@@ -23,11 +23,12 @@
                 <sheet>
                     <div name="button_box" class="oe_button_box">
                         <button class="oe_stat_button"
-                                type="object" icon="fa-bars" name="action_service_history">
+                                type="object" icon="fa-wrench" name="action_service_history">
                             <div class="o_stat_info">
-                                <field name="service_history"/>
-                                <span class="o_stat_value">SERVICE HISTORY
-                                </span>
+
+                                 <field name="repair_count"/>
+                                 <field name="service_history" widget="statinfo" string="service history"/>
+
                             </div>
                         </button>
 
@@ -73,20 +74,23 @@
                                 <field name="customer_compliant"/>
                             </p>
                         </page>
-                        <page string="labor details" >
+                        <page string="labor details"  invisible="service_type=='free'">
                             <form>
-                                <field name="labor_working_details" >
+                                <field name="labor_working_details_ids" >
                                     <list editable="bottom">
                                         <field name="labor_name"/>
                                         <field name="employee_assigned_to_labor"/>
                                         <field name="hourly_cost"/>
                                         <field name="hours_spent"/>
                                         <field name="sub_total_amount"/>
-                                        <field name="total_one"/>
                                     </list>
                                 </field>
-                                  </form>
+                                <group>
+                                        <span>    </span>
+                                        <field  string="TOTAL" name="labor_total_amount" style="margin-left: 1020px;"/>
+                                </group>
 
+                                  </form>
                         </page>
 
 
@@ -103,7 +107,8 @@
 
                             </form>
                                <group>
-                                    <field name="total"/>
+                                   <span>      </span>
+                                    <field string="TOTAL" name="total" style="margin-left: 1050px;" />
                                 </group>
 
                         </page>
