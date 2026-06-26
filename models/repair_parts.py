@@ -7,7 +7,7 @@ class RepairParts(models.Model):
     quantity = fields.Float(string="QTY")
     unit_price = fields.Float(related='product_id.list_price')
     sub_total_price = fields.Float(string="TOTAL" ,compute='total_price')
-    consumed_parts = fields.One2many('repair.parts', 'consumed_parts_id')
+    consumed_parts_ids = fields.One2many('repair.parts', 'consumed_parts_id')
 
 
     @api.depends('quantity','unit_price')

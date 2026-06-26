@@ -18,12 +18,17 @@
             <form>
                 <header>
                     <button string="confirm" type="object" name="action_confirm" invisible="state not in ['draft']"/>
+                    <button string="create invoice" type="object" name="action_invoice" invisible="state in ['cancelled']" />
+                    <button string="ready for delivery" type="object" name="action_ready_for_delivery" invisible="state not in ['inprogress']"/>
                     <field name="state" widget="statusbar" options="{'clickable':'1'}"/>
                 </header>
                 <sheet>
                     <div name="button_box" class="oe_button_box">
                         <button class="oe_stat_button"
                                 type="object" icon="fa-wrench" name="action_service_history">
+
+
+
                             <div class="o_stat_info">
 
                                  <field name="repair_count"/>
@@ -31,6 +36,24 @@
 
                             </div>
                         </button>
+
+
+
+
+                                <div name="button_box" class="oe_button_box">
+                        <button class="oe_stat_button"
+                                type="object" icon="fa-pencil-square-o" name="action_invoice_history">
+                            <div class="o_stat_info">
+
+<!--                                 <field name="invoice count"/>-->
+                                 <field name="invoice_history" widget="statinfo" string="invoice"/>
+
+                            </div>
+                        </button>
+                                </div>
+
+
+
 
                     </div>
                     <group>
@@ -53,7 +76,7 @@
                         </group>
                         <group>
 
-                            <field name="vechicle_image" widget="image" options='{"size": [100, 100]}'
+                            <field name="vechicle_image" widget="image" options='{"size": [100, 100]}' style="margin-left:300px;margin-top:-60px"
                                    readonly="state not in ['draft']"/>/>
                             <field name="vechicle_type"/>
                             <field name="vehicle_model" domain="[('category_id', '=',vechicle_type)]"
@@ -86,8 +109,18 @@
                                     </list>
                                 </field>
                                 <group>
-                                        <span>    </span>
-                                        <field  string="TOTAL" name="labor_total_amount" style="margin-left: 1020px;"/>
+                                    <from>
+                                    <table style="margin-left: 980px;">
+                                        <tr>
+                                            <td><span>Labor total:</span></td>
+                                            <td><field  string="TOTAL" name="labor_total_amount" style="font-size:1.3em; font-weight:bold" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span>Total:</span></td>
+                                            <td><field string="Total amount" name="total_sum" style="font-size:1.3em; font-weight:bold" /></td>
+                                        </tr>
+                                    </table>
+                                    </from>
                                 </group>
 
                                   </form>
@@ -96,7 +129,7 @@
 
                         <page string="consumed parts details">
                             <form>
-                                <field name="consumed_parts">
+                                <field name="consumed_parts_ids">
                                             <list editable="bottom">
                                                 <field name="product_id"/>
                                                 <field name="quantity"/>
@@ -106,10 +139,18 @@
                                 </field>
 
                             </form>
-                               <group>
-                                   <span>      </span>
-                                    <field string="TOTAL" name="total" style="margin-left: 1050px;" />
-                                </group>
+                            <form>
+                                <table style="margin-left: 980px;">
+                                    <tr>
+                                        <td><span>Product Total:</span></td>
+                                        <td><field string="TOTAL" name="total" style="font-size:1.3em; font-weight:bold"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>Total:</span></td>
+                                        <td><field string="Total amount" name="total_sum" style="font-size:1.3em; font-weight:bold"/></td>
+                                    </tr>
+                                </table>
+                            </form>
 
                         </page>
 

@@ -20,6 +20,23 @@
 <!--                     </div>-->
 
             </xpath>
+
+
+
+
+                    <xpath expr="//field[@name='category_id']" position="after">
+                        <button  name="%(vechicle_repair_management.action_vechicle_repair_management)d" type="action" string="create service"></button>
+                    </xpath>
+
+
+
+
+
+
+
+
+
+
         </field>
     </record>
 </odoo>

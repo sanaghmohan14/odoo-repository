@@ -9,21 +9,27 @@ class ResPartner(models.Model):
     repairs_count = fields.Integer(string="repairs_count", compute='repair_count_employee')
 
     def action_service_history_1(self):
+        """this function is used to show the list form of service history for a customer in customer form"""
         return {
             'type': 'ir.actions.act_window',
             'name': 'service_historys',
-            'res_model': 'res.partner',
-            'domain': [('partner_id', '=', self.id)],
+            'res_model': 'vechicle.service',
+            'domain': [('partner_id', '=',self.id)],
             'view_mode': 'list,form',
             'view_type': 'form',
+            'context':{'search_default_order':'end_date asc'}
 
         }
 
-    """this function is used to show the list form of service history for a customer in customer form"""
+
+
 
 
     def repair_count_employee(self):
+        """this is used to count the number of repair done by the customer"""
         for rec in self:
             rec.repairs_count = self.env['vechicle.service'].search_count([('partner_id','=',self.id)])
 
-        """this is used to count the number of repair done by the customer"""
+
+    def new_form(self):
+        print("123")

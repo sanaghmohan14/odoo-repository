@@ -20,3 +20,5 @@ class LaborDetails(models.Model):
     """employee cost is used to calculate the wage of the employee based on the hourly cost and hours spent by the employee on the work"""
 
 
+
+
