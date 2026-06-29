@@ -18,8 +18,16 @@
             <form>
                 <header>
                     <button string="confirm" type="object" name="action_confirm" invisible="state not in ['draft']"/>
-                    <button string="create invoice" type="object" name="action_invoice" invisible="state in ['cancelled']" />
-                    <button string="ready for delivery" type="object" name="action_ready_for_delivery" invisible="state not in ['inprogress']"/>
+
+
+                    <button string="create invoice" type="object" name="action_invoice"
+                            invisible="state in ['cancelled']">
+                        <!--                        <field name="invoice_id"></field>-->
+                    </button>
+
+
+                    <button string="ready for delivery" type="object" name="action_ready_for_delivery"
+                            invisible="state not in ['inprogress']"/>
                     <field name="state" widget="statusbar" options="{'clickable':'1'}"/>
                 </header>
                 <sheet>
@@ -28,31 +36,26 @@
                                 type="object" icon="fa-wrench" name="action_service_history">
 
 
-
                             <div class="o_stat_info">
 
-                                 <field name="repair_count"/>
-                                 <field name="service_history" widget="statinfo" string="service history"/>
+                                <field name="repair_count"/>
+                                <field name="service_history" widget="statinfo" string="service history"/>
 
                             </div>
                         </button>
 
 
+                        <div name="button_box" class="oe_button_box">
+                            <button class="oe_stat_button"
+                                    type="object" icon="fa-pencil-square-o" name="action_view_invoice">
+                                <div class="o_stat_info">
 
+                                    <field name="invoice_count"/>
+                                    <field name="invoice_id" widget="statinfo" string="invoice"/>
 
-                                <div name="button_box" class="oe_button_box">
-                        <button class="oe_stat_button"
-                                type="object" icon="fa-pencil-square-o" name="action_invoice_history">
-                            <div class="o_stat_info">
-
-<!--                                 <field name="invoice count"/>-->
-                                 <field name="invoice_history" widget="statinfo" string="invoice"/>
-
-                            </div>
-                        </button>
                                 </div>
-
-
+                            </button>
+                        </div>
 
 
                     </div>
@@ -73,10 +76,13 @@
                             <field name="company_id" readonly="state not in ['draft']"/>
                             <field name="service_tag" widget="many2many_tags" options="{'color_field': 'color'}"/>
 
+                        <field name="invoice_paid" widget="badge" invisible="not invoice_paid"/>
+
                         </group>
                         <group>
 
-                            <field name="vechicle_image" widget="image" options='{"size": [100, 100]}' style="margin-left:300px;margin-top:-60px"
+                            <field name="vechicle_image" widget="image" options='{"size": [100, 100]}'
+                                   style="margin-left:300px;margin-top:-60px"
                                    readonly="state not in ['draft']"/>/>
                             <field name="vechicle_type"/>
                             <field name="vehicle_model" domain="[('category_id', '=',vechicle_type)]"
@@ -91,15 +97,9 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="customer complaint">
-                            <p>
-                                Add customer complaint here
-                                <field name="customer_compliant"/>
-                            </p>
-                        </page>
-                        <page string="labor details"  invisible="service_type=='free'">
+                        <page string="labor details" invisible="service_type=='free'">
                             <form>
-                                <field name="labor_working_details_ids" >
+                                <field name="labor_working_details_ids">
                                     <list editable="bottom">
                                         <field name="labor_name"/>
                                         <field name="employee_assigned_to_labor"/>
@@ -110,48 +110,72 @@
                                 </field>
                                 <group>
                                     <from>
-                                    <table style="margin-left: 980px;">
-                                        <tr>
-                                            <td><span>Labor total:</span></td>
-                                            <td><field  string="TOTAL" name="labor_total_amount" style="font-size:1.3em; font-weight:bold" /></td>
-                                        </tr>
-                                        <tr>
-                                            <td><span>Total:</span></td>
-                                            <td><field string="Total amount" name="total_sum" style="font-size:1.3em; font-weight:bold" /></td>
-                                        </tr>
-                                    </table>
+                                        <table style="margin-left: 980px;">
+                                            <tr>
+                                                <td>
+                                                    <span>Labor total:</span>
+                                                </td>
+                                                <td>
+                                                    <field string="TOTAL" name="labor_total_amount"
+                                                           style="font-size:1.3em; font-weight:bold"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span>Total:</span>
+                                                </td>
+                                                <td>
+                                                    <field string="Total amount" name="total_sum"
+                                                           style="font-size:1.3em; font-weight:bold"/>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </from>
                                 </group>
 
-                                  </form>
+                            </form>
                         </page>
-
-
                         <page string="consumed parts details">
                             <form>
                                 <field name="consumed_parts_ids">
-                                            <list editable="bottom">
-                                                <field name="product_id"/>
-                                                <field name="quantity"/>
-                                                <field name="unit_price"/>
-                                                <field name="sub_total_price"/>
-                                            </list>
+                                    <list editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="unit_price"/>
+                                        <field name="sub_total_price"/>
+                                    </list>
                                 </field>
 
                             </form>
                             <form>
                                 <table style="margin-left: 980px;">
                                     <tr>
-                                        <td><span>Product Total:</span></td>
-                                        <td><field string="TOTAL" name="total" style="font-size:1.3em; font-weight:bold"/></td>
+                                        <td>
+                                            <span>Product Total:</span>
+                                        </td>
+                                        <td>
+                                            <field string="TOTAL" name="total"
+                                                   style="font-size:1.3em; font-weight:bold"/>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td><span>Total:</span></td>
-                                        <td><field string="Total amount" name="total_sum" style="font-size:1.3em; font-weight:bold"/></td>
+                                        <td>
+                                            <span>Total:</span>
+                                        </td>
+                                        <td>
+                                            <field string="Total amount" name="total_sum"
+                                                   style="font-size:1.3em; font-weight:bold"/>
+                                        </td>
                                     </tr>
                                 </table>
                             </form>
 
+                        </page>
+                        <page string="customer complaint">
+                            <p>
+                                Add customer complaint here
+                                <field name="customer_compliant"/>
+                            </p>
                         </page>
 
 
@@ -192,13 +216,12 @@
                 <filter name="state" string="filter by inprogress" domain="[('state', '=', 'inprogress')]"/>
                 <filter name="state" string="filter by cancelled" domain="[('state', '=', 'cancelled')]"/>
                 <filter name="state" string="filter by ready" domain="[('state', '=', 'ready')]"/>
-
+                <filter name="active" string="filter by active"/>
                 <filter name="group_by_customer" string="customer" context="{'group_by':'partner_id'}"/>
                 <filter name="group_by_state" string="state" context="{'group_by':'state'}"/>
                 <filter name="group_by_vechicle_type" string="vehicle_type" context="{'group_by':'vechicle_type'}"/>
                 <filter name="group_by_vechicle_type" string="vehicle_type"
                         context="{'group_by':'employee_assigned_to_labor'}"/>
-
             </search>
         </field>
     </record>

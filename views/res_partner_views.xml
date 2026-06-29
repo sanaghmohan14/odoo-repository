@@ -17,24 +17,19 @@
 
                             </div>
                         </button>
+                        <button name="action_create_service" type="object" string=" create service" ></button>
+
 <!--                     </div>-->
 
             </xpath>
 
 
-
-
                     <xpath expr="//field[@name='category_id']" position="after">
                         <button  name="%(vechicle_repair_management.action_vechicle_repair_management)d" type="action" string="create service"></button>
+
+<!--                        <button name="action_create_service" type="object" string="service" ></button>-->
+                        <button name="action_invoice" type="object"></button>
                     </xpath>
-
-
-
-
-
-
-
-
 
 
         </field>

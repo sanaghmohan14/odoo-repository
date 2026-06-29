@@ -32,19 +32,22 @@ class VechicleService(models.Model):
     labor_total_amount = fields.Float(string="Total",compute='labor_total')
     repair_count = fields.Integer(string="repair_count",compute='repair_count_employee')
     total_sum = fields.Float(string='Amount',compute="sum_of_cost")
+    invoice_count=fields.Integer(string="invoices",compute="no_of_invoice")
+    invoice_paid=fields.Boolean(compute="compute_invoice_paid")
+
+    active=fields.Boolean(string="Active",default=True)
 
 
-
-    invoice_history=fields.Char(string="invoice",action="action_invoice_history")
+    #
+    invoice_id=fields.Many2one('account.move')
+    # invoice_id = fields.Char( string="invoice", action="action_invoice_history")
 
     def action_confirm(self):
         """the action confirmm is used to
                  change the state to in progress when clicked the confrim button"""
         self.state='inprogress'
 
-    def action_invoice(self):
-        """the action invoice is used to create an invoice"""
-        self.state='ready'
+
 
     def action_ready_for_delivery(self):
         self.state='ready'
@@ -112,30 +115,41 @@ class VechicleService(models.Model):
 
 
 
-
+    #
     def action_invoice_history(self):
-        print(" ")
+        print("hi")
 
 
 
 
+    def action_invoice(self):
+        print("hey")
+        """the action invoice is used to create an invoice"""
+        invoice=self.env['account.move'].create({'move_type':'out_invoice','partner_id':self.partner_id.id})
+        self.invoice_id=invoice.id
+
+
+    def action_view_invoice(self):
+        return{
+            'type': 'ir.actions.act_window',
+            'name': 'invoice_id',
+            'res_model': 'account.move',
+            'res_id': self.invoice_id.id,
+            'view_type': 'list,form',
+            'view_mode':'form'
+        }
 
 
 
+    def no_of_invoice(self):
+        """repair count function is used to calculate the number of repair services done by the customer"""
+        for rec in self:
+            rec.invoice_count=self.env['account.move'].search_count([('partner_id','=',rec.partner_id.id)])
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+    def compute_invoice_paid(self):
+        for rec in self:
+            rec.invoice_paid=(rec.invoice_paid)=(rec.invoice_paid)=(rec.invoice_id.payment_state=='paid') if rec.invoice_id else False
 
 
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="labor_cost_product" model="product.product">
+        <field name="name">labor cost</field>
+        <field name="name">guns</field>
+        <field name="type">service</field>
+    </record>
+</odoo>
