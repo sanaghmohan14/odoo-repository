@@ -11,6 +11,8 @@ class LaborDetails(models.Model):
     labor_working_details_ids = fields.One2many('labor.details', 'labor_details_id')
     labor_total_amount = fields.Float(string="total amount")
 
+    # labor_cost_product=fields.Many2one('product.product',string="labor product")
+
 
     @api.depends('hourly_cost','hours_spent')
     def employee_cost(self):

@@ -53,6 +53,11 @@ class ResPartner(models.Model):
         return res
 
 
+
+
+
+
+
     invoice_id = fields.Many2one('account.move')
 
     def action_invoice(self):

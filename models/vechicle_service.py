@@ -1,5 +1,7 @@
 
 from odoo import fields,models,api
+from odoo.orm.decorators import ondelete
+
 
 class VechicleService(models.Model):
     _name="vechicle.service"
@@ -12,7 +14,7 @@ class VechicleService(models.Model):
     vechicle_no = fields.Char(string="vechicle no",copy=False)
     state = fields.Selection([('draft','draft'),('inprogress','inprogress'),('ready','ready'),('cancelled','cancelled')],string="state",required=True,tracking=True,default="draft")
     vechicle_image = fields.Image(string="vechicle image",max_width=1920,max_height=1920)
-    vechicle_type = fields.Many2one('fleet.vehicle.model.category',string="category",required=True)
+    vechicle_type = fields.Many2one('fleet.vehicle.model.category',string="category",ondelete="set null")
     vehicle_model = fields.Many2one('fleet.vehicle.model',string="vehicle model")
     service_type = fields.Selection([('option1','free'),('option2','paid')],string="service type",required=True)
     start_date = fields.Date(string="start date",required=True,default=fields.Date.today())
@@ -32,14 +34,14 @@ class VechicleService(models.Model):
     labor_total_amount = fields.Float(string="Total",compute='labor_total')
     repair_count = fields.Integer(string="repair_count",compute='repair_count_employee')
     total_sum = fields.Float(string='Amount',compute="sum_of_cost")
-    invoice_count=fields.Integer(string="invoices",compute="no_of_invoice")
-    invoice_paid=fields.Boolean(compute="compute_invoice_paid")
+    invoice_count = fields.Integer(string="invoices",compute="no_of_invoice")
 
-    active=fields.Boolean(string="Active",default=True)
+    # invoice_paid=fields.Boolean(compute="compute_invoice_paid")
+    invoice_paid = fields.Selection([('paid','paid'),('unpaid','unpaid')],compute='compute_invoice_paid')
 
+    active = fields.Boolean(string="Active",default=True)
+    invoice_id = fields.Many2one('account.move')
 
-    #
-    invoice_id=fields.Many2one('account.move')
     # invoice_id = fields.Char( string="invoice", action="action_invoice_history")
 
     def action_confirm(self):
@@ -98,8 +100,6 @@ class VechicleService(models.Model):
 
 
 
-
-
     def repair_count_employee(self):
         """repair count function is used to calculate the number of repair services done by the customer"""
         for rec in self:
@@ -114,8 +114,6 @@ class VechicleService(models.Model):
             rec.total_sum=rec.labor_total_amount+rec.total+rec.estimated_amount
 
 
-
-    #
     def action_invoice_history(self):
         print("hi")
 
@@ -126,7 +124,52 @@ class VechicleService(models.Model):
         print("hey")
         """the action invoice is used to create an invoice"""
         invoice=self.env['account.move'].create({'move_type':'out_invoice','partner_id':self.partner_id.id})
+
+
+        labor_cost=self.env.ref('labor_details.labor_cost_product')
+        self.env['account.move.line'].create(
+            {
+                'move_id':invoice.id,
+                'product_id':labor_cost.id,
+                'quantity':1,
+                'price_unit':self.labor_total_amount,
+                'name':'labor_cost',
+
+            }
+        )
+
+
+
+
+        for line in self.consumed_parts_ids:
+            self.env['account.move.line'].create(
+                {
+                    'move_id':invoice.id,
+                    'product_id':line.product_id.id,
+                    'quantity':line.quantity,
+                    'price_unit':line.unit_price,
+                    'name':line.product_id.name,
+
+               }
+            )
+
+        # for i in self.labor_working_details_ids:
+        #     self.env['account.move.line'].create(
+        #         {
+        #             'move_id':invoice.id,
+        #             'product_id':i.labor_details_id.id,
+        #             'price_unit':i.labor_total_amount,
+        #             'name':'labor cost',
+        #         }
+        #     )
+
         self.invoice_id=invoice.id
+
+
+
+
+
+
 
 
     def action_view_invoice(self):
@@ -146,10 +189,13 @@ class VechicleService(models.Model):
         for rec in self:
             rec.invoice_count=self.env['account.move'].search_count([('partner_id','=',rec.partner_id.id)])
 
-
     def compute_invoice_paid(self):
         for rec in self:
-            rec.invoice_paid=(rec.invoice_paid)=(rec.invoice_paid)=(rec.invoice_id.payment_state=='paid') if rec.invoice_id else False
+            if rec.invoice_id and rec.invoice_id.payment_state == 'paid':
+                rec.invoice_paid='paid'
+            else:
+                rec.invoice_paid='unpaid'
+
 
 
 

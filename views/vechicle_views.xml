@@ -16,6 +16,7 @@
         <field name="model">vechicle.service</field>
         <field name="arch" type="xml">
             <form>
+
                 <header>
                     <button string="confirm" type="object" name="action_confirm" invisible="state not in ['draft']"/>
 
@@ -23,12 +24,14 @@
                     <button string="create invoice" type="object" name="action_invoice"
                             invisible="state in ['cancelled']">
                         <!--                        <field name="invoice_id"></field>-->
+
                     </button>
 
 
                     <button string="ready for delivery" type="object" name="action_ready_for_delivery"
                             invisible="state not in ['inprogress']"/>
                     <field name="state" widget="statusbar" options="{'clickable':'1'}"/>
+
                 </header>
                 <sheet>
                     <div name="button_box" class="oe_button_box">
@@ -50,7 +53,7 @@
                                     type="object" icon="fa-pencil-square-o" name="action_view_invoice">
                                 <div class="o_stat_info">
 
-                                    <field name="invoice_count"/>
+<!--                                 <field name="invoice_count"/>-->
                                     <field name="invoice_id" widget="statinfo" string="invoice"/>
 
                                 </div>
@@ -62,9 +65,11 @@
                     <group>
                         <h2>
                             <field name="name" readonly="1"/>
+
                         </h2>
                     </group>
                     <group>
+
                         <group>
 
                             <field name="partner_id" widget="res_partner_many2one"
@@ -75,8 +80,9 @@
                             <field name="advisor_id" readonly="state not in ['draft']"/>
                             <field name="company_id" readonly="state not in ['draft']"/>
                             <field name="service_tag" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="invoice_paid" widget="badge"/>
+                            <filter name="active" string="Active"/>
 
-                        <field name="invoice_paid" widget="badge" invisible="not invoice_paid"/>
 
                         </group>
                         <group>
@@ -216,12 +222,12 @@
                 <filter name="state" string="filter by inprogress" domain="[('state', '=', 'inprogress')]"/>
                 <filter name="state" string="filter by cancelled" domain="[('state', '=', 'cancelled')]"/>
                 <filter name="state" string="filter by ready" domain="[('state', '=', 'ready')]"/>
-                <filter name="active" string="filter by active"/>
                 <filter name="group_by_customer" string="customer" context="{'group_by':'partner_id'}"/>
                 <filter name="group_by_state" string="state" context="{'group_by':'state'}"/>
                 <filter name="group_by_vechicle_type" string="vehicle_type" context="{'group_by':'vechicle_type'}"/>
                 <filter name="group_by_vechicle_type" string="vehicle_type"
                         context="{'group_by':'employee_assigned_to_labor'}"/>
+                <filter name="Active" string="archived" domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>
