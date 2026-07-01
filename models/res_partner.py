@@ -7,7 +7,8 @@ class ResPartner(models.Model):
     service_historys = fields.Char(string="service history", action="action_service_history_1")
     partner_id = fields.Many2one('res.partner', string="customer", required=True)
     repairs_count = fields.Integer(string="repairs_count", compute='repair_count_employee')
-    active = fields.Boolean(string="Active", default=True)
+    active = fields.Boolean(string="Active")
+
 
 
     def action_service_history_1(self):
@@ -41,19 +42,25 @@ class ResPartner(models.Model):
             'view_mode':'form',
             'target':'current',
             'context':{'default_partner_id':self.id},
+
         }
+
+
+    # def action_customer_archive(self):
+    #     # self.ensure_one()
+    #     self.partner_id.write({'active':False})
+    #     return True
+
 
 
     def write(self,vals):
         res=super().write(vals)
 
         if 'active' in vals and vals['active'] is False:
-            repair=self.env['vechicle.service'].search(['partner_id','in',self.ids])
+            repair=self.env['vechicle.service'].search([('partner_id','in',self.ids)])
             repair.write({'active':False})
+            # repair.partner_id.write({'active':False})
         return res
-
-
-
 
 
 

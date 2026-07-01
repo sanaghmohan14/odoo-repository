@@ -9,18 +9,18 @@ class VechicleService(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     partner_id = fields.Many2one('res.partner',string="customer",required=True)
-    mobile_number = fields.Char(related='partner_id.phone',required=True,)
+    mobile_number = fields.Char(related='partner_id.phone',)
     advisor_id = fields.Many2one('res.users',string="advisor",required=True)
-    vechicle_no = fields.Char(string="vechicle no",copy=False)
+    vechicle_no = fields.Char(string="vechicle no",copy=False,required=True)
     state = fields.Selection([('draft','draft'),('inprogress','inprogress'),('ready','ready'),('cancelled','cancelled')],string="state",required=True,tracking=True,default="draft")
     vechicle_image = fields.Image(string="vechicle image",max_width=1920,max_height=1920)
     vechicle_type = fields.Many2one('fleet.vehicle.model.category',string="category",ondelete="set null")
     vehicle_model = fields.Many2one('fleet.vehicle.model',string="vehicle model")
     service_type = fields.Selection([('option1','free'),('option2','paid')],string="service type",required=True)
-    start_date = fields.Date(string="start date",required=True,default=fields.Date.today())
+    start_date = fields.Date(string="start date",default=fields.Date.today())
     duration = fields.Integer(string="duration")
     end_date = fields.Date(string="delivery date")
-    estimated_amount = fields.Float(string="estimated amount",required=True)
+    estimated_amount = fields.Float(string="estimated amount")
     customer_compliant = fields.Text(string="customer complaint")
     tag_ids = fields.Many2many('vehicle.tag', string="tags")
     company_id = fields.Many2one('res.company',string="Company",default=lambda self: self.env.company,readonly=True)
@@ -37,10 +37,13 @@ class VechicleService(models.Model):
     invoice_count = fields.Integer(string="invoices",compute="no_of_invoice")
 
     # invoice_paid=fields.Boolean(compute="compute_invoice_paid")
-    invoice_paid = fields.Selection([('paid','paid'),('unpaid','unpaid')],compute='compute_invoice_paid')
+    invoice_paid = fields.Selection([('paid','paid'),('unpaid','unpaid')],compute='compute_invoice_paid',widget="ribbon")
 
     active = fields.Boolean(string="Active",default=True)
     invoice_id = fields.Many2one('account.move')
+    sub_total_amount = fields.Float(string="sub total amount", compute='employee_cost')
+    hourly_cost = fields.Float(string="hourly cost of employee")
+    hours_spent = fields.Float(string="hours spent")
 
     # invoice_id = fields.Char( string="invoice", action="action_invoice_history")
 
@@ -123,23 +126,22 @@ class VechicleService(models.Model):
     def action_invoice(self):
         print("hey")
         """the action invoice is used to create an invoice"""
+
         invoice=self.env['account.move'].create({'move_type':'out_invoice','partner_id':self.partner_id.id})
 
+        labor_cost=self.env.ref('vechicle_repair_management.labor_cost_product')
+        for i in self.labor_working_details_ids:
+            self.env['account.move.line'].create(
+                {
+                    'move_id':invoice.id,
+                    'product_id':labor_cost.id,
+                    'quantity':1,
+                    'price_unit':self.sub_total_amount,
+                    # 'name':'labor_cost',
+                    'name': f"labor-{i.labor_name.name}  ,{i.hours_spent} Hours , {i.employee_assigned_to_labor.name} manager"
 
-        labor_cost=self.env.ref('labor_details.labor_cost_product')
-        self.env['account.move.line'].create(
-            {
-                'move_id':invoice.id,
-                'product_id':labor_cost.id,
-                'quantity':1,
-                'price_unit':self.labor_total_amount,
-                'name':'labor_cost',
-
-            }
+                }
         )
-
-
-
 
         for line in self.consumed_parts_ids:
             self.env['account.move.line'].create(
@@ -153,26 +155,13 @@ class VechicleService(models.Model):
                }
             )
 
-        # for i in self.labor_working_details_ids:
-        #     self.env['account.move.line'].create(
-        #         {
-        #             'move_id':invoice.id,
-        #             'product_id':i.labor_details_id.id,
-        #             'price_unit':i.labor_total_amount,
-        #             'name':'labor cost',
-        #         }
-        #     )
-
         self.invoice_id=invoice.id
 
 
 
 
-
-
-
-
     def action_view_invoice(self):
+        """this function is used to view the generated invoice when clicking the button"""
         return{
             'type': 'ir.actions.act_window',
             'name': 'invoice_id',
@@ -189,16 +178,21 @@ class VechicleService(models.Model):
         for rec in self:
             rec.invoice_count=self.env['account.move'].search_count([('partner_id','=',rec.partner_id.id)])
 
+
+
     def compute_invoice_paid(self):
+        """this is to show the count of invoice in smart button"""
         for rec in self:
             if rec.invoice_id and rec.invoice_id.payment_state == 'paid':
                 rec.invoice_paid='paid'
             else:
                 rec.invoice_paid='unpaid'
 
-
-
-
+    @api.depends('hourly_cost', 'hours_spent')
+    def employee_cost(self):
+        """employee cost is used to calculate the wage of the employee based on the hourly cost and hours spent by the employee on the work"""
+        for rec in self:
+            rec.sub_total_amount = rec.hourly_cost * rec.hours_spent if rec.hourly_cost else rec.hours_spent
 
 
 

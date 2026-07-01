@@ -5,7 +5,11 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+
+
+
             <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+
 
 <!--                     <div name="button_box" class="oe_button_box">-->
                         <button class="oe_stat_button"
@@ -17,18 +21,22 @@
 
                             </div>
                         </button>
-                        <button name="action_create_service" type="object" string=" create service" ></button>
+<!--                        <button name="action_create_service" type="object" string=" create service" ></button>-->
 
 <!--                     </div>-->
 
             </xpath>
 
 
-                    <xpath expr="//field[@name='category_id']" position="after">
-                        <button  name="%(vechicle_repair_management.action_vechicle_repair_management)d" type="action" string="create service"></button>
+                    <xpath expr="//div[hasclass('oe_button_box')]" position="before">
+                        <form>
+                            <header style="width:1050px">
+<!--                                <button name="action_create_service" type="object" string=" create service"  ></button>-->
+                                <button name="%(vechicle_repair_management.create_vechicle_service_wizard)d" type="action" string=" create 123 service"  ></button>
 
-<!--                        <button name="action_create_service" type="object" string="service" ></button>-->
-                        <button name="action_invoice" type="object"></button>
+                            </header>
+                        </form>
+
                     </xpath>
 
 

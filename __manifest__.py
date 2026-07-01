@@ -10,6 +10,7 @@
     'auto_install': True,
     'depends': ["mail", "contacts",'account','product','fleet'],
     'data': ["security/ir.model.access.csv",
+             "wizards/create_vechicle_service.xml",
              "data/labor_product.xml",
              "views/res_partner_views.xml",
              "data/reference.xml",

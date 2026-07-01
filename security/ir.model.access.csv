@@ -10,3 +10,8 @@ vechicle_repair_management.access_repair_parts,access_repair_parts,vechicle_repa
 
 vechicle_repair_management.access_labor_details,access_labor_details,vechicle_repair_management.model_labor_details,base.group_user,1,1,1,1
 
+
+vechicle_repair_management.access_create_vechicle_service,access_create.vechicle_service,vechicle_repair_management.model_create_vechicle_service,base.group_user,1,1,1,1
+
+
+

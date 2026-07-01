@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="create_service_form" model="ir.ui.view">
+        <field name="name">create.vechicle.service.wizard</field>
+        <field name="model">create.vechicle.service</field>
+        <field name="arch" type="xml">
+            <form string="create service">
+                <group>
+                    <field name="partner_id"/>
+                    <field name="advisor_id"/>
+                    <field name="vechicle_no"/>
+                    <field name="service_type"/>
+                </group>
+                <footer>
+                    <button name="action_create_service" string="create service" type="object" class="btn-primary" data-hotkey="q"/>
+                    <button string="Discard" class="btn-secondary" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="create_vechicle_service_wizard" model="ir.actions.act_window">
+        <field name="name">Create Vechicle service</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">create.vechicle.service</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="create_service_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>
