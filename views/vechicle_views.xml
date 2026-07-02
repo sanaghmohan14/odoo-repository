@@ -21,10 +21,13 @@
 
 
                     <button string="create invoice" type="object" name="action_invoice"
-                            invisible="state in ['cancelled']">
+                            invisible="state in [('cancelled'),('draft'),('inprogress')]">
+
                         <!--                        <field name="invoice_id"></field>-->
 
                     </button>
+                    <button string="Done" type="object"  name="action_done" invisible="state in [('cancelled'),('draft'),('inprogress')] "></button>
+                    <button type="object" string="Send Email" name="action_send_mail"></button>
 
 
                     <button string="ready for delivery" type="object" name="action_ready_for_delivery"
@@ -55,7 +58,7 @@
                                     type="object" icon="fa-pencil-square-o" name="action_view_invoice">
                                 <div class="o_stat_info">
 
-<!--                                 <field name="invoice_count"/>-->
+<!--                                    <field name="invoice_count"/>-->
                                     <field name="invoice_id" widget="statinfo" string="invoice"/>
 
                                 </div>
@@ -78,10 +81,12 @@
                                    context="{'show_address': 1}"
                                    options='{"always_reload": True}' readonly="state not in ['draft']"/>
                             <field name="mobile_number" readonly="state not in ['draft']"/>
+                            <field name="email" />
                             <field name="vechicle_no" required="True" readonly="state not in ['draft']"/>
                             <field name="advisor_id" readonly="state not in ['draft']"/>
                             <field name="company_id" readonly="state not in ['draft']"/>
                             <field name="service_tag" widget="many2many_tags" options="{'color_field': 'color'}"/>
+
                             <filter name="active" string="Active"/>
 
 
@@ -104,7 +109,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="labor details" invisible="service_type=='paid'">
+                        <page string="labor details" invisible="service_type=='option1'">
                             <form>
                                 <field name="labor_working_details_ids">
                                     <list editable="bottom">
@@ -200,6 +205,7 @@
         <field name="model">vechicle.service</field>
         <field name="arch" type="xml">
             <list>
+                <field name="name"/>
                 <field name="partner_id"/>
                 <field name="end_date"/>
                 <field name="state"/>

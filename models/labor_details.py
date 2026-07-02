@@ -18,7 +18,8 @@ class LaborDetails(models.Model):
     def employee_cost(self):
         """employee cost is used to calculate the wage of the employee based on the hourly cost and hours spent by the employee on the work"""
         for rec in self:
-            rec.sub_total_amount=rec.hourly_cost*rec.hours_spent if rec.hourly_cost else rec.hours_spent
+            # rec.sub_total_amount=rec.hourly_cost*rec.hours_spent if rec.hourly_cost else rec.hours_spent
+            rec.sub_total_amount = rec.hourly_cost * rec.hours_spent
 
 
 

@@ -4,4 +4,5 @@ from . import vehicle_tag
 from . import service_tag
 from .import repair_parts
 from . import labor_details
+from . import account_move
 

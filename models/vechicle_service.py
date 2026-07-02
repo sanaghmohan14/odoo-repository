@@ -10,9 +10,10 @@ class VechicleService(models.Model):
 
     partner_id = fields.Many2one('res.partner',string="customer",required=True)
     mobile_number = fields.Char(related='partner_id.phone',)
+    email = fields.Char(related='partner_id.email',string="Email")
     advisor_id = fields.Many2one('res.users',string="advisor",required=True)
     vechicle_no = fields.Char(string="vechicle no",copy=False,required=True)
-    state = fields.Selection([('draft','draft'),('inprogress','inprogress'),('ready','ready'),('cancelled','cancelled')],string="state",required=True,tracking=True,default="draft")
+    state = fields.Selection([('draft','draft'),('inprogress','inprogress'),('ready','ready'),('cancelled','cancelled'),('done','done')],string="state",required=True,tracking=True,default="draft")
     vechicle_image = fields.Image(string="vechicle image",max_width=1920,max_height=1920)
     vechicle_type = fields.Many2one('fleet.vehicle.model.category',string="category",ondelete="set null")
     vehicle_model = fields.Many2one('fleet.vehicle.model',string="vehicle model")
@@ -35,17 +36,15 @@ class VechicleService(models.Model):
     repair_count = fields.Integer(string="repair_count",compute='repair_count_employee')
     total_sum = fields.Float(string='Amount',compute="sum_of_cost")
     invoice_count = fields.Integer(string="invoices",compute="no_of_invoice")
-
-    # invoice_paid=fields.Boolean(compute="compute_invoice_paid")
     invoice_paid = fields.Selection([('paid','paid'),('unpaid','unpaid')],compute='compute_invoice_paid',widget="ribbon")
-
     active = fields.Boolean(string="Active",default=True)
     invoice_id = fields.Many2one('account.move')
     sub_total_amount = fields.Float(string="sub total amount", compute='employee_cost')
     hourly_cost = fields.Float(string="hourly cost of employee")
     hours_spent = fields.Float(string="hours spent")
+    service_id = fields.Many2one('vechicle.service',string="service")
 
-    # invoice_id = fields.Char( string="invoice", action="action_invoice_history")
+
 
     def action_confirm(self):
         """the action confirmm is used to
@@ -56,6 +55,9 @@ class VechicleService(models.Model):
 
     def action_ready_for_delivery(self):
         self.state='ready'
+
+    def action_done(self):
+        self.state='done'
 
 
 
@@ -124,52 +126,81 @@ class VechicleService(models.Model):
 
 
     def action_invoice(self):
+        self.ensure_one()
         print("hey")
         """the action invoice is used to create an invoice"""
 
-        invoice=self.env['account.move'].create({'move_type':'out_invoice','partner_id':self.partner_id.id})
 
-        labor_cost=self.env.ref('vechicle_repair_management.labor_cost_product')
+        invoice = self.env['account.move'].create({'move_type': 'out_invoice', 'partner_id': self.partner_id.id,'service_id': self.id})
+
+        labor_cost = self.env.ref('vechicle_repair_management.labor_cost_product')
+
+        description="labor cost \n"
+
+        labor_sum = sum(self.labor_working_details_ids.mapped('sub_total_amount'))
         for i in self.labor_working_details_ids:
-            self.env['account.move.line'].create(
+
+            description+=f"{i.labor_name.name} {i.hours_spent} hours"
+        self.env['account.move.line'].create(
                 {
-                    'move_id':invoice.id,
-                    'product_id':labor_cost.id,
-                    'quantity':1,
-                    'price_unit':self.sub_total_amount,
-                    # 'name':'labor_cost',
-                    'name': f"labor-{i.labor_name.name}  ,{i.hours_spent} Hours , {i.employee_assigned_to_labor.name} manager"
+                    'move_id': invoice.id,
+                    'product_id': labor_cost.id,
+                    'quantity': 1,
+                    'price_unit': labor_sum,
+                    'name':description,
+                    # 'name': f"labor-{i.labor_name.name}  ,{i.hours_spent} Hours , {i.employee_assigned_to_labor.name} manager"
 
                 }
-        )
+            )
 
         for line in self.consumed_parts_ids:
             self.env['account.move.line'].create(
                 {
-                    'move_id':invoice.id,
-                    'product_id':line.product_id.id,
-                    'quantity':line.quantity,
-                    'price_unit':line.unit_price,
-                    'name':line.product_id.name,
+                    'move_id': invoice.id,
+                    'product_id': line.product_id.id,
+                    'quantity': line.quantity,
+                    'price_unit': line.unit_price,
+                    'name': line.product_id.name,
 
-               }
+                }
             )
 
-        self.invoice_id=invoice.id
+        self.invoice_id = invoice.id
+
+
+
 
 
 
 
     def action_view_invoice(self):
+        self.ensure_one()
         """this function is used to view the generated invoice when clicking the button"""
-        return{
+        invoice=self.env['account.move'].search([('move_type','=', 'out_invoice'), ('partner_id','=',self.partner_id.id)])
+        if len(invoice)==1:
+
+            return{
             'type': 'ir.actions.act_window',
             'name': 'invoice_id',
             'res_model': 'account.move',
             'res_id': self.invoice_id.id,
-            'view_type': 'list,form',
-            'view_mode':'form'
-        }
+            'view_type': 'form',
+            'quantity':1,
+            'domain':[('service_id','=',self.id)],
+            'view_mode':'form',
+            'target':'current'
+            }
+        else:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'invoice_id',
+                'res_model': 'account.move',
+                'res_id': self.invoice_id.id,
+                'view_type': 'list,form',
+                'quantity': 1,
+                'domain': [('service_id','=',self.id),],
+                'view_mode': 'list,form'
+            }
 
 
 
@@ -192,9 +223,17 @@ class VechicleService(models.Model):
     def employee_cost(self):
         """employee cost is used to calculate the wage of the employee based on the hourly cost and hours spent by the employee on the work"""
         for rec in self:
-            rec.sub_total_amount = rec.hourly_cost * rec.hours_spent if rec.hourly_cost else rec.hours_spent
+            # rec.sub_total_amount = rec.hourly_cost * rec.hours_spent if rec.hourly_cost else rec.hours_spent
+            rec.sub_total_amount = rec.hourly_cost * rec.hours_spent
 
-
+    def action_send_mail(self):
+        template=self.env.ref('vechicle_repair_management.vehicle_service_template')
+        for rec in self:
+            if template:
+                # 3. Send the email
+                template.send_mail(rec.id, force_send=True)
+            else:
+                print("no template")
 
 
 
