@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Template to send Sale Order email to the customer -->
+    <record id="email_template" model="mail.template">
+        <field name="name">email template</field>
+        <field name="model_id" ref='vechicle_repair_management.model_vechicle_service'/>
+        <field name="email_from">{{user.email}}</field>
+        <field name="email_to">{{object.partner_id.email}}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+                <p>Dear
+                    <strong>
+                        <t t-out="object.partner_id.name"/>
+                    </strong>
+                </p>
+                <p>
+                     your vehicle    <t t-out="object.vehicle_model.name" />  numbered  <t t-out="object.vechicle_no"/> is ready for delivery   on
+                    <t t-out="object.end_date"/>  with an amount of <t t-out="object.total_sum "/> please collect your vehicle
+                </p>
+            </div>
+        </field>
+    </record>
+</odoo>
+
+
+
+
+

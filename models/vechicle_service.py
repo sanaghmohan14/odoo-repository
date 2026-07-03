@@ -1,4 +1,4 @@
-
+from datetime import datetime, timedelta
 from odoo import fields,models,api
 from odoo.orm.decorators import ondelete
 
@@ -227,16 +227,39 @@ class VechicleService(models.Model):
             rec.sub_total_amount = rec.hourly_cost * rec.hours_spent
 
     def action_send_mail(self):
-        template=self.env.ref('vechicle_repair_management.vehicle_service_template')
+        template=self.env.ref('vechicle_repair_management.email_template')
         for rec in self:
             if template:
-                # 3. Send the email
                 template.send_mail(rec.id, force_send=True)
             else:
                 print("no template")
 
 
 
+    def send_mail(self):
+        self.state = 'ready'
+        template = self.env.ref('vechicle_repair_management.email_template')
+        template.send_mail(self.id, force_send=True)
+
+
+    def write(self,vals):
+        res=super().write(vals)
+        if 'state' in vals:
+            template = self.env.ref('vechicle_repair_management.email_template')
+            for rec in self:
+                template.send_mail(rec.id, force_send=True)
+
+
+
+    def archive_action(self):
+        self.ensure_one()
+        self.state = 'cancelled'
+        self.active=False
+
+
+    def action_cancel_archive(self):
+        self.ensure_one()
+        self.write({'state':'cancelled','active':False})
 
 
 
@@ -245,7 +268,26 @@ class VechicleService(models.Model):
 
 
 
+    # def writes(self,vals):
+    #     res=super().write(vals)
+    #     if 'state' in vals and vals['active'] is False:
+    #         archive=self.env['vechicle.service'].search([('partner_id','in',self.ids)])
+    #         archive.write({'active':False,'state':'cancelled'})
+    #     return res
 
 
 
 
+
+    def archive_canceled_order(self):
+        self.ensure_one()
+
+
+    #
+    # def archive_my(self):
+    #     self.ensure_one()
+    #     self.state = 'cancelled'
+    # def write(self,vals):
+    #     res = super().write(vals)
+    #     if 'state' in vals:
+    #         self.active=False

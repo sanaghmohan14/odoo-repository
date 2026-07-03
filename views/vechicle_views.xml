@@ -27,17 +27,19 @@
 
                     </button>
                     <button string="Done" type="object"  name="action_done" invisible="state in [('cancelled'),('draft'),('inprogress')] "></button>
-                    <button type="object" string="Send Email" name="action_send_mail"></button>
+                    <button type="object" string="Send Email" name="action_send_mail" invisible="state not in ['ready']"></button>
+                    <button type="object" string="archive" name="action_cancel_archive"></button>
 
 
                     <button string="ready for delivery" type="object" name="action_ready_for_delivery"
                             invisible="state not in ['inprogress']"/>
-                    <field name="state" widget="statusbar" options="{'clickable':'1'}"/>
+                    <field name="state" widget="statusbar" options="{'clickable':'1'}" type="object" action="action_cancel_archive"/>
 
                 </header>
             <sheet>
 
                 <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <widget name="web_ribbon" title="Paid" bg_color="text-bg-success" invisible="invoice_paid=='unpaid'" />
                     <div name="button_box" class="oe_button_box">
                         <button class="oe_stat_button"
@@ -106,6 +108,7 @@
                             <field name="duration"/>
                             <field name="end_date" readonly="state not in ['draft']"/>
                             <field name="estimated_amount" readonly="state not in ['draft']"/>
+                            <field name="active" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
