@@ -11,6 +11,7 @@
     'depends': ["mail", "contacts",'account','product','fleet'],
     'data': ["security/ir.model.access.csv",
              "data/email_template.xml",
+             "wizards/create_date.xml",
              "wizards/create_vechicle_service.xml",
              "data/labor_product.xml",
              "views/res_partner_views.xml",

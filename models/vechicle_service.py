@@ -56,12 +56,6 @@ class VechicleService(models.Model):
     def action_ready_for_delivery(self):
         self.state='ready'
 
-    def action_done(self):
-        self.state='done'
-
-
-
-
 
     @api.model
     def create(self,vals_list):
@@ -226,6 +220,7 @@ class VechicleService(models.Model):
             # rec.sub_total_amount = rec.hourly_cost * rec.hours_spent if rec.hourly_cost else rec.hours_spent
             rec.sub_total_amount = rec.hourly_cost * rec.hours_spent
 
+
     def action_send_mail(self):
         template=self.env.ref('vechicle_repair_management.email_template')
         for rec in self:
@@ -236,18 +231,20 @@ class VechicleService(models.Model):
 
 
 
-    def send_mail(self):
-        self.state = 'ready'
-        template = self.env.ref('vechicle_repair_management.email_template')
-        template.send_mail(self.id, force_send=True)
-
-
-    def write(self,vals):
-        res=super().write(vals)
-        if 'state' in vals:
-            template = self.env.ref('vechicle_repair_management.email_template')
-            for rec in self:
-                template.send_mail(rec.id, force_send=True)
+    # def send_mail(self):
+    #     """this function is used to send mail when the state is on the ready state"""
+    #     self.state = 'ready'
+    #     template = self.env.ref('vechicle_repair_management.email_template')
+    #     template.send_mail(self.id, force_send=True)
+    #
+    #
+    # def write(self,vals):
+    #     """used to over ride / modify the mail sending function when the state is on the ready state"""
+    #     res=super().write(vals)
+    #     if 'state' in vals:
+    #         template = self.env.ref('vechicle_repair_management.email_template')
+    #         for rec in self:
+    #             template.send_mail(rec.id, force_send=True)
 
 
 
@@ -263,31 +260,28 @@ class VechicleService(models.Model):
 
 
 
+    def write(self,vals):
+        if vals.get('state') == 'cancelled':
+            vals['active'] = False
+        return super().write(vals)
+
+
+
+    def archive_cancelled_orders(self):
+        date_limit=fields.Datetime.now()-timedelta(hours=30)
+        archives=self.search([('state','=','cancelled'),('start_date','<=',date_limit),('active','=',True)])
+        archives.write({'active':False})
 
 
 
 
 
-    # def writes(self,vals):
-    #     res=super().write(vals)
-    #     if 'state' in vals and vals['active'] is False:
-    #         archive=self.env['vechicle.service'].search([('partner_id','in',self.ids)])
-    #         archive.write({'active':False,'state':'cancelled'})
-    #     return res
 
 
-
-
-
-    def archive_canceled_order(self):
+    def action_done(self):
+        """this function is used to automatically add the delivery date to today when clicking the done button"""
         self.ensure_one()
+        self.write({'state':'done',
+                    'end_date':fields.Date.today()})
 
 
-    #
-    # def archive_my(self):
-    #     self.ensure_one()
-    #     self.state = 'cancelled'
-    # def write(self,vals):
-    #     res = super().write(vals)
-    #     if 'state' in vals:
-    #         self.active=False

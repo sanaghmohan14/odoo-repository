@@ -20,6 +20,8 @@
                     <button string="confirm" type="object" name="action_confirm" invisible="state not in ['draft']"/>
 
 
+
+
                     <button string="create invoice" type="object" name="action_invoice"
                             invisible="state in [('cancelled'),('draft'),('inprogress')]">
 
@@ -27,8 +29,12 @@
 
                     </button>
                     <button string="Done" type="object"  name="action_done" invisible="state in [('cancelled'),('draft'),('inprogress')] "></button>
+
                     <button type="object" string="Send Email" name="action_send_mail" invisible="state not in ['ready']"></button>
                     <button type="object" string="archive" name="action_cancel_archive"></button>
+
+
+
 
 
                     <button string="ready for delivery" type="object" name="action_ready_for_delivery"
