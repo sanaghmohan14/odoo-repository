@@ -28,10 +28,10 @@
                         <!--                        <field name="invoice_id"></field>-->
 
                     </button>
-                    <button string="Done" type="object"  name="action_done" invisible="state in [('cancelled'),('draft'),('inprogress')] "></button>
+                    <button string="Done" type="object"  name="action_done" invisible="state in [('cancelled'),('draft'),('done')] "></button>
 
                     <button type="object" string="Send Email" name="action_send_mail" invisible="state not in ['ready']"></button>
-                    <button type="object" string="archive" name="action_cancel_archive"></button>
+<!--                    <button type="object" string="archive" name="action_cancel_archive"></button>-->
 
 
 
@@ -90,12 +90,12 @@
                                    options='{"always_reload": True}' readonly="state not in ['draft']"/>
                             <field name="mobile_number" readonly="state not in ['draft']"/>
                             <field name="email" />
-                            <field name="vechicle_no" required="True" readonly="state not in ['draft']"/>
+                            <field name="vechicle_no" readonly="state not in ['draft']"/>
                             <field name="advisor_id" readonly="state not in ['draft']"/>
                             <field name="company_id" readonly="state not in ['draft']"/>
-                            <field name="service_tag" widget="many2many_tags" options="{'color_field': 'color'}"/>
-
+                            <field name="service_tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                             <filter name="active" string="Active"/>
+
 
 
                         </group>
@@ -112,8 +112,9 @@
                             <field name="service_type" readonly="state not in ['draft']" ondelete="set null"/>
                             <field name="start_date" readonly="state not in ['draft']"/>
                             <field name="duration"/>
-                            <field name="end_date" readonly="state not in ['draft']"/>
+                            <field name="end_date" readonly="state not in ['draft']" invisible="state in ['cancelled']"/>
                             <field name="estimated_amount" readonly="state not in ['draft']"/>
+                            <field name="cancelled_date" invisible="state not in ['cancelled']"/>
                             <field name="active" invisible="1"/>
                         </group>
                     </group>
