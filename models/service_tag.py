@@ -1,6 +1,6 @@
 from odoo import fields,models
 
-class VehicleTag(models.Model):
+class ServiceTag(models.Model):
     _name = 'service.tag'
     _description = 'Service Tag'
 

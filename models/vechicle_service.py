@@ -12,23 +12,24 @@ class VechicleService(models.Model):
     mobile_number = fields.Char(related='partner_id.phone',)
     email = fields.Char(related='partner_id.email',string="Email")
     advisor_id = fields.Many2one('res.users',string="advisor",required=True)
-    vechicle_no = fields.Char(string="vechicle no",copy=False,required=True)
+    vechicle_no = fields.Char(string="vechicle no",copy=False,)
     state = fields.Selection([('draft','draft'),('inprogress','inprogress'),('ready','ready'),('cancelled','cancelled'),('done','done')],string="state",required=True,tracking=True,default="draft")
     vechicle_image = fields.Image(string="vechicle image",max_width=1920,max_height=1920)
-    vechicle_type = fields.Many2one('fleet.vehicle.model.category',string="category",ondelete="set null")
-    vehicle_model = fields.Many2one('fleet.vehicle.model',string="vehicle model")
+    vechicle_type_id = fields.Many2one('fleet.vehicle.model.category',string="category",ondelete="set null")
+    vehicle_model_id = fields.Many2one('fleet.vehicle.model',string="vehicle model")
     service_type = fields.Selection([('option1','free'),('option2','paid')],string="service type",required=True)
     start_date = fields.Date(string="start date",default=fields.Date.today())
     duration = fields.Integer(string="duration")
     end_date = fields.Date(string="delivery date")
+    cancelled_date=fields.Date(string="cancelled date")
     estimated_amount = fields.Float(string="estimated amount")
     customer_compliant = fields.Text(string="customer complaint")
     tag_ids = fields.Many2many('vehicle.tag', string="tags")
     company_id = fields.Many2one('res.company',string="Company",default=lambda self: self.env.company,readonly=True)
     name = fields.Char(string='', readonly=True ,default='New')
-    service_tag = fields.Many2many('service.tag',string="service tags")
+    service_tag_ids= fields.Many2many('service.tag',string="service tags")
     labor_working_details_ids = fields.One2many('labor.details','labor_details_id')
-    employee_assigned_to_labor = fields.Many2one('res.users',string="manager of labor")
+    employee_assigned_to_labor_id = fields.Many2one('res.users',string="manager of labor")
     consumed_parts_ids= fields.One2many('repair.parts','consumed_parts_id')
     service_history = fields.Char(string="service history",action="action_service_history")
     total = fields.Float(string="Total", compute='total_amount')
@@ -43,6 +44,7 @@ class VechicleService(models.Model):
     hourly_cost = fields.Float(string="hourly cost of employee")
     hours_spent = fields.Float(string="hours spent")
     service_id = fields.Many2one('vechicle.service',string="service")
+
 
 
 
@@ -134,7 +136,7 @@ class VechicleService(models.Model):
         labor_sum = sum(self.labor_working_details_ids.mapped('sub_total_amount'))
         for i in self.labor_working_details_ids:
 
-            description+=f"{i.labor_name.name} {i.hours_spent} hours"
+            description+=f"{i.labor_name_id.name} {i.hours_spent} hours"
         self.env['account.move.line'].create(
                 {
                     'move_id': invoice.id,
@@ -222,6 +224,7 @@ class VechicleService(models.Model):
 
 
     def action_send_mail(self):
+        """to send mail when clicking the send mail button"""
         template=self.env.ref('vechicle_repair_management.email_template')
         for rec in self:
             if template:
@@ -231,57 +234,38 @@ class VechicleService(models.Model):
 
 
 
-    # def send_mail(self):
-    #     """this function is used to send mail when the state is on the ready state"""
-    #     self.state = 'ready'
-    #     template = self.env.ref('vechicle_repair_management.email_template')
-    #     template.send_mail(self.id, force_send=True)
-    #
-    #
-    # def write(self,vals):
-    #     """used to over ride / modify the mail sending function when the state is on the ready state"""
-    #     res=super().write(vals)
-    #     if 'state' in vals:
-    #         template = self.env.ref('vechicle_repair_management.email_template')
-    #         for rec in self:
-    #             template.send_mail(rec.id, force_send=True)
-
-
-
-    def archive_action(self):
+    def action_done(self):
+        """this function is used to automatically add the delivery date to today when clicking the done button"""
         self.ensure_one()
-        self.state = 'cancelled'
-        self.active=False
+        self.write({'state':'done',
+                    'end_date':fields.Date.today()})
 
 
-    def action_cancel_archive(self):
-        self.ensure_one()
-        self.write({'state':'cancelled','active':False})
-
-
-
-    def write(self,vals):
-        if vals.get('state') == 'cancelled':
-            vals['active'] = False
-        return super().write(vals)
-
-
-
+    @api.model
     def archive_cancelled_orders(self):
-        date_limit=fields.Datetime.now()-timedelta(hours=30)
-        archives=self.search([('state','=','cancelled'),('start_date','<=',date_limit),('active','=',True)])
+        """this function is used to archive the orders that aare stayed in cancelled state for 1 month"""
+        print("abc")
+        date_limit=fields.Datetime.now()-timedelta(days=30)
+        print(date_limit)
+        archives=self.search([('state','=','cancelled'),('cancelled_date','<=',date_limit),('cancelled_date','!=',False),('active','=',True)])
         archives.write({'active':False})
 
 
 
 
 
-
-
-    def action_done(self):
-        """this function is used to automatically add the delivery date to today when clicking the done button"""
-        self.ensure_one()
-        self.write({'state':'done',
-                    'end_date':fields.Date.today()})
+    def write(self,vals):
+        """to modify the existing function with write based on conditions"""
+        res=super().write(vals)
+        if 'state' in vals:
+            template = self.env.ref('vechicle_repair_management.email_template')
+            for record in self:
+                if record.state == 'ready' and template:
+                    template.send_mail(record.id, force_send=True)
+                if record.state == 'cancelled':
+                    record.cancelled_date=fields.Date.today()
+                if record.state == 'inprogress' and not record.start_date:
+                    record.start_date = fields.Date.today()
+            return res
 
 

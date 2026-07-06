@@ -14,7 +14,7 @@
                     </strong>
                 </p>
                 <p>
-                     your vehicle    <t t-out="object.vehicle_model.name" />  numbered  <t t-out="object.vechicle_no"/> is ready for delivery   on
+                     your vehicle    <t t-out="object.vehicle_model_id.name" />  numbered  <t t-out="object.vechicle_no"/> is ready for delivery   on
                     <t t-out="object.end_date"/>  with an amount of <t t-out="object.total_sum "/> please collect your vehicle
                 </p>
             </div>

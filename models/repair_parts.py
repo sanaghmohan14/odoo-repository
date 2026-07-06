@@ -1,4 +1,6 @@
 from odoo import fields,models,api
+
+
 class RepairParts(models.Model):
     _name='repair.parts'
 

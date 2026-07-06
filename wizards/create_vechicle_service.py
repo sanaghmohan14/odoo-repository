@@ -12,6 +12,7 @@ class CreateVechicleService(models.TransientModel):
 
 
     def action_create_service(self):
+        """to create a service form as a wizard"""
 
         self.env['vechicle.service'].create({'partner_id':self.partner_id.id,
                                              'advisor_id':self.advisor_id.id,

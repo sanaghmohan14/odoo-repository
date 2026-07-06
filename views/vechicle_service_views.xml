@@ -89,14 +89,12 @@
                                    context="{'show_address': 1}"
                                    options='{"always_reload": True}' readonly="state not in ['draft']"/>
                             <field name="mobile_number" readonly="state not in ['draft']"/>
-                            <field name="email" />
+                            <field name="email"   groups="vechicle_repair_management.group_manager"/>
                             <field name="vechicle_no" readonly="state not in ['draft']"/>
                             <field name="advisor_id" readonly="state not in ['draft']"/>
                             <field name="company_id" readonly="state not in ['draft']"/>
                             <field name="service_tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                             <filter name="active" string="Active"/>
-
-
 
                         </group>
                         <group>
@@ -104,8 +102,8 @@
                             <field name="vechicle_image" widget="image" options='{"size": [100, 100]}'
                                    style="margin-left:300px;margin-top:-60px"
                                    readonly="state not in ['draft']"/>/>
-                            <field name="vechicle_type"/>
-                            <field name="vehicle_model" domain="[('category_id', '=',vechicle_type)]"
+                            <field name="vechicle_type_id"/>
+                            <field name="vehicle_model_id" domain="[('category_id', '=',vechicle_type_id)]"
                                    readonly="state not in ['draft']"/>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"
                                    readonly="state not in ['draft']"/>
@@ -123,8 +121,8 @@
                             <form>
                                 <field name="labor_working_details_ids">
                                     <list editable="bottom">
-                                        <field name="labor_name"/>
-                                        <field name="employee_assigned_to_labor"/>
+                                        <field name="labor_name_id"/>
+                                        <field name="employee_assigned_to_labor_id"/>
                                         <field name="hourly_cost"/>
                                         <field name="hours_spent"/>
                                         <field name="sub_total_amount"/>
@@ -210,15 +208,15 @@
         </field>
     </record>
     <!-- tree view for from -->
-    <record id="vehicle_service_management_tree_views" model="ir.ui.view">
+    <record id="vehicle_service_management_tree_views" model="ir.ui.view" >
         <field name="name">vehicle.service.management.view.form</field>
-        <field name="model">vechicle.service</field>
-        <field name="arch" type="xml">
-            <list>
-                <field name="name"/>
-                <field name="partner_id"/>
-                <field name="end_date"/>
-                <field name="state"/>
+        <field name="model" >vechicle.service</field>
+        <field name="arch" type="xml" >
+            <list >
+                <field name="name" groups="vechicle_repair_management.group_manager"/>
+                <field name="partner_id" groups="vechicle_repair_management.group_manager"/>
+                <field name="end_date" groups="vechicle_repair_management.group_manager"/>
+                <field name="state" groups="vechicle_repair_management.group_manager"/>
             </list>
         </field>
     </record>
@@ -229,12 +227,12 @@
         <field name="arch" type="xml">
             <search>
                 <field name="partner_id"/>
-                <field name="vechicle_type"/>
+                <field name="vechicle_type_id"/>
                 <field name="name"/>
                 <field name="state"/>
                 <field name="vechicle_no"/>
                 <field name="advisor_id"/>
-                <field name="employee_assigned_to_labor"/>
+                <field name="employee_assigned_to_labor_id"/>
                 <filter name="state" string="filter by state"/>
                 <filter name="state" string="filter by draft" domain="[('state', '=', 'draft')]"/>
                 <filter name="state" string="filter by inprogress" domain="[('state', '=', 'inprogress')]"/>
@@ -242,9 +240,9 @@
                 <filter name="state" string="filter by ready" domain="[('state', '=', 'ready')]"/>
                 <filter name="group_by_customer" string="customer" context="{'group_by':'partner_id'}"/>
                 <filter name="group_by_state" string="state" context="{'group_by':'state'}"/>
-                <filter name="group_by_vechicle_type" string="vehicle_type" context="{'group_by':'vechicle_type'}"/>
-                <filter name="group_by_vechicle_type" string="vehicle_type"
-                        context="{'group_by':'employee_assigned_to_labor'}"/>
+                <filter name="group_by_vechicle_type_id" string="vehicle_type" context="{'group_by':'vechicle_type_id'}"/>
+                <filter name="group_by_vechicle_type_id" string="vehicle_type"
+                        context="{'group_by':'employee_assigned_to_labor_id'}"/>
                 <filter name="Active" string="archived" domain="[('active', '=', False)]"/>
             </search>
         </field>

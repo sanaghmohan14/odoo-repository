@@ -10,15 +10,16 @@
     'auto_install': True,
     'depends': ["mail", "contacts",'account','product','fleet'],
     'data': ["security/ir.model.access.csv",
+             "security/user_groups.xml",
+             "data/cron_demo.xml",
              "data/email_template.xml",
-             "wizards/create_date.xml",
-             "wizards/create_vechicle_service.xml",
+             "wizards/create_vechicle_service_views.xml",
              "data/labor_product.xml",
              "views/res_partner_views.xml",
              "data/reference.xml",
              "data/demo.xml",
-             "views/vehicle_tags.xml",
-             "views/vechicle_views.xml",
+             "views/vehicle_tags_views.xml",
+             "views/vechicle_service_views.xml",
              "views/vechicle_repair_menu.xml"]
 
 }
