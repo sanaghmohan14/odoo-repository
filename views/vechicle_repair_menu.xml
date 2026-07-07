@@ -9,7 +9,7 @@
 
 
     <menuitem id="menu_vehicle_tag" name="vehicle tag" parent="menu_vechicle_service_management_root"
-              action="action_vehicle_tag"/>
+              action="action_vehicle_tag"  groups="vechicle_repair_management.group_technician" />
 
 
 

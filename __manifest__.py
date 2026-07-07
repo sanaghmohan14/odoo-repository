@@ -10,6 +10,7 @@
     'auto_install': True,
     'depends': ["mail", "contacts",'account','product','fleet'],
     'data': ["security/ir.model.access.csv",
+             "security/record_rules.xml",
              "security/user_groups.xml",
              "data/cron_demo.xml",
              "data/email_template.xml",
