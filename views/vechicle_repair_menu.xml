@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <menuitem id="menu_vechicle_service_management_root" name="vechicle repair  management"></menuitem>
+    <menuitem id="menu_vechicle_service_management_root" name="Vechicle Repair Management"></menuitem>
 
 
-    <menuitem id="menu_vechicle_service_management_vechicle" name="vehicle repair"
+    <menuitem id="menu_vechicle_service_management_vechicle" name="Vehicle Repair"
               parent="menu_vechicle_service_management_root" action="action_vechicle_repair_management"></menuitem>
 
 
-    <menuitem id="menu_vehicle_tag" name="vehicle tag" parent="menu_vechicle_service_management_root"
+    <menuitem id="menu_vehicle_tag" name="Vehicle Tag" parent="menu_vechicle_service_management_root"
               action="action_vehicle_tag"  groups="vechicle_repair_management.group_technician" />
 
 

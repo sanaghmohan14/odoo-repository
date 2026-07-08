@@ -5,26 +5,27 @@ from odoo.orm.decorators import ondelete
 
 class VechicleService(models.Model):
     _name="vechicle.service"
-    _description = "vechicle service"
+    _description = "Vechicle Service"
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    partner_id = fields.Many2one('res.partner',string="customer",required=True)
+    partner_id = fields.Many2one('res.partner',string="Customer",required=True)
     mobile_number = fields.Char(related='partner_id.phone',)
     email = fields.Char(related='partner_id.email',string="Email")
-    advisor_id = fields.Many2one('res.users',string="advisor",required=True)
+    advisor_id = fields.Many2one('res.users',string="Advisor",required=True)
     vechicle_no = fields.Char(string="vechicle no",copy=False,)
     state = fields.Selection([('draft','draft'),('inprogress','inprogress'),('ready','ready'),('cancelled','cancelled'),('done','done')],string="state",required=True,tracking=True,default="draft")
+    customer_state=fields.Selection([('nonservice','non service'),('service','service')],string="Customer State",tracking=True,default="nonservice")
     vechicle_image = fields.Image(string="vechicle image",max_width=1920,max_height=1920)
-    vechicle_type_id = fields.Many2one('fleet.vehicle.model.category',string="category",ondelete="set null")
-    vehicle_model_id = fields.Many2one('fleet.vehicle.model',string="vehicle model")
-    service_type = fields.Selection([('option1','free'),('option2','paid')],string="service type",required=True)
+    vechicle_type_id = fields.Many2one('fleet.vehicle.model.category',string="Category",ondelete="set null")
+    vehicle_model_id = fields.Many2one('fleet.vehicle.model',string="Vehicle Model")
+    service_type = fields.Selection([('option1','free'),('option2','paid')],string="Service Type",required=True)
     start_date = fields.Date(string="start date",default=fields.Date.today())
-    duration = fields.Integer(string="duration")
-    end_date = fields.Date(string="delivery date")
-    cancelled_date=fields.Date(string="cancelled date")
-    estimated_amount = fields.Float(string="estimated amount")
-    customer_compliant = fields.Text(string="customer complaint")
-    tag_ids = fields.Many2many('vehicle.tag', string="tags")
+    duration = fields.Integer(string="Duration")
+    end_date = fields.Date(string="Delivery Date")
+    cancelled_date=fields.Date(string="Cancelled date")
+    estimated_amount = fields.Float(string="Estimated amount")
+    customer_compliant = fields.Text(string="Customer complaint")
+    tag_ids = fields.Many2many('vehicle.tag', string="Tags")
     company_id = fields.Many2one('res.company',string="Company",default=lambda self: self.env.company,readonly=True)
     name = fields.Char(string='', readonly=True ,default='New')
     service_tag_ids= fields.Many2many('service.tag',string="service tags")
@@ -44,6 +45,23 @@ class VechicleService(models.Model):
     hourly_cost = fields.Float(string="hourly cost of employee")
     hours_spent = fields.Float(string="hours spent")
     service_id = fields.Many2one('vechicle.service',string="service")
+    delivery_today=fields.Boolean(compute="_compute_delivery_today")
+    delivery_tomorrow=fields.Boolean(compute="_compute_delivery_tomorrow")
+
+
+    @api.depends('end_date')
+    def _compute_delivery_tomorrow(self):
+        tomorrow = fields.Date.today() + timedelta(days=1)
+        for rec in self:
+            rec.delivery_tomorrow=rec.end_date==tomorrow
+
+
+
+    @api.depends('end_date')
+    def _compute_delivery_today(self):
+        today=fields.Date.today()
+        for rec in self:
+            rec.delivery_today=rec.end_date==today
 
 
 
@@ -52,6 +70,7 @@ class VechicleService(models.Model):
         """the action confirmm is used to
                  change the state to in progress when clicked the confrim button"""
         self.state='inprogress'
+
 
 
 
@@ -251,6 +270,12 @@ class VechicleService(models.Model):
         archives.write({'active':False})
 
 
+    @api.model
+    def compute_delivery_today(self):
+        today=fields.Date.today()
+        for rec in self:
+            rec.delivery_date=rec.end_date==today
+
 
 
 
@@ -267,5 +292,22 @@ class VechicleService(models.Model):
                 if record.state == 'inprogress' and not record.start_date:
                     record.start_date = fields.Date.today()
             return res
+
+
+    @api.model
+    def change_status(self):
+        repairs = self.search([])
+        for repair in repairs:
+            if repair.partner_id:
+                repair.partner_id.customer_state = 'service'
+
+
+
+
+
+
+
+
+
 
 

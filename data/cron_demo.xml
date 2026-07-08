@@ -10,4 +10,19 @@
         <field name="active">True</field>
         <field name="state">code</field>
     </record>
+
+
+    <record id="ir_cron_change_customer_state" model="ir.cron">
+        <field name="name">Customer State</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="code">model.change_status()</field>
+        <field name='interval_number'>1</field>
+        <field name='interval_type'>minutes</field>
+        <field name="active">True</field>
+        <field name="state">code</field>
+    </record>
+
+
+    
+
 </odoo>

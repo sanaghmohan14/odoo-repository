@@ -40,6 +40,7 @@
                     <button string="ready for delivery" type="object" name="action_ready_for_delivery"
                             invisible="state not in ['inprogress']"/>
                     <field name="state" widget="statusbar" options="{'clickable':'1'}" type="object" action="action_cancel_archive"/>
+<!--                    <field name="customer_state" widget="statusbar" type="object" options="{'clickable':'1'}" />-->
 
                 </header>
             <sheet>
@@ -214,7 +215,7 @@
         <field name="name">vehicle.service.management.view.form</field>
         <field name="model" >vechicle.service</field>
         <field name="arch" type="xml" >
-            <list decoration-danger="state=='inprogress' and end_date==context_today()" decoration-success="state=='done'"  decoration-bf="state not in ['one']">
+            <list decoration-danger="delivery_today and state=='inprogress'" decoration-success="state=='done'"  decoration-bf="state not in ['one']" decoration-info="delivery_tomorrow and state=='inprogress'">
                 <field name="name" />
                 <field name="partner_id" />
                 <field name="end_date" />

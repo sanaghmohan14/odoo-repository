@@ -8,6 +8,8 @@ class ResPartner(models.Model):
     partner_id = fields.Many2one('res.partner', string="customer", required=True)
     repairs_count = fields.Integer(string="repairs_count", compute='repair_count_employee')
     active = fields.Boolean(string="Active")
+    customer_state=fields.Selection([('nonservice','non service'),('service','service')],string="Customer State",tracking=True,default="nonservice")
+    service_id = fields.Many2one('vechicle.service', string="service")
 
 
 
@@ -72,3 +74,19 @@ class ResPartner(models.Model):
         """the action invoice is used to create an invoice"""
         invoice=self.env['account.move'].create({'move_type':'out_invoice','partner_id':self.id})
         self.invoice_id=invoice.id
+
+
+    @api.model
+    def change_status(self):
+        repairs=self.search([])
+        for repair in repairs:
+            if repair.partner_id:
+                repair.partner_id.customer_state='service'
+
+    # @api.model
+    # def change_status(self):
+    #     repairs = self.search([])
+    #     for repair in repairs:
+    #         if repair.service_id:
+    #             repair.service_id.customer_state = 'service'
+

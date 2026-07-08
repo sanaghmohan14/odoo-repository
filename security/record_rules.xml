@@ -10,4 +10,15 @@
         <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval='False'/>
     </record>
+
+    <record id="vechicle_repair_rule_company" model="ir.rule">
+        <field name="name">vehicle repair record rules for company</field>
+        <field name="model_id" ref="model_vechicle_service"/>
+        <field name="domain_force">['|',
+            ('company_id', '=', False),
+            ('company_id', 'in', company_ids)]
+        </field>
+        <field name="global" eval="True"/>
+    </record>
+
 </odoo>
