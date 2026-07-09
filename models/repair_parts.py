@@ -14,11 +14,12 @@ class RepairParts(models.Model):
 
     @api.depends('quantity','unit_price')
     def total_price(self):
+        """total price is used to find the tota price of a product based on the quantity of the product"""
         for record in self:
                 # record.sub_total_price = record.unit_price * record.quantity if record.quantity else record.unit_price
                 record.sub_total_price = record.unit_price * record.quantity
 
-    """total price is used to find the tota price of a product based on the quantity of the product"""
+
 
 
 

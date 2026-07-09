@@ -25,9 +25,9 @@
 
                          <form>
 
-                            <header style="width:1160px ; margin-bottom:30px ; background-color:white; margin-top:2px;">
+                            <header style="width:1160px ; margin-bottom:30px ;  margin-top:2px;">
 <!--                                <button name="action_create_service" type="object" string=" create service"  ></button>-->
-                                <button name="%(vechicle_repair_management.create_vechicle_service_wizard)d" type="action" string=" create service"  ></button>
+                                <button name="%(vechicle_repair_management.create_vechicle_service_wizard)d" type="action" string=" Create Service"  ></button>
 
                                 <field name="customer_state" widget="statusbar" type="object" options="{'clickable':'1'}" />
 

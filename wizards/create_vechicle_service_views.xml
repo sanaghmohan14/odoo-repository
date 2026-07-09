@@ -21,7 +21,7 @@
 
 
     <record id="create_vechicle_service_wizard" model="ir.actions.act_window">
-        <field name="name">Create Vechicle service</field>
+        <field name="name">Create Vechicle Service</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">create.vechicle.service</field>
         <field name="view_mode">form</field>

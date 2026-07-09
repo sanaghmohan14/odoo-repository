@@ -3,7 +3,7 @@
 
     <record id="action_vechicle_repair_management" model="ir.actions.act_window">
 
-        <field name="name">vechicle service</field>
+        <field name="name">Vechicle Service</field>
         <field name="res_model">vechicle.service</field>
         <field name="view_mode">list,form</field>
     </record>
@@ -120,7 +120,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="labor details" invisible="service_type=='option1'">
+                        <page string="Labor Details" invisible="service_type=='option1'">
                             <form>
                                 <field name="labor_working_details_ids">
                                     <list editable="bottom">
@@ -158,11 +158,11 @@
 
                             </form>
                         </page>
-                        <page string="consumed parts details">
+                        <page string="Consumed Parts Details"  >
                             <form>
                                 <field name="consumed_parts_ids">
                                     <list editable="bottom">
-                                        <field name="product_id"/>
+                                        <field name="product_id" />
                                         <field name="quantity"/>
                                         <field name="unit_price"/>
                                         <field name="sub_total_price"/>
@@ -185,16 +185,16 @@
                                         <td>
                                             <span>Total:</span>
                                         </td>
-                                        <td>
+                                        <td >
                                             <field string="Total amount" name="total_sum"
-                                                   style="font-size:1.3em; font-weight:bold"/>
+                                                   style="font-size:1.3em; font-weight:bold; " />
                                         </td>
                                     </tr>
                                 </table>
                             </form>
 
                         </page>
-                        <page string="customer complaint">
+                        <page string="Customer Complaint">
                             <p>
                                 Add customer complaint here
                                 <field name="customer_compliant"/>

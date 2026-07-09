@@ -5,6 +5,7 @@ from odoo.orm.decorators import ondelete
 
 class VechicleService(models.Model):
     _name="vechicle.service"
+    _check_company_auto = True
     _description = "Vechicle Service"
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
@@ -12,38 +13,38 @@ class VechicleService(models.Model):
     mobile_number = fields.Char(related='partner_id.phone',)
     email = fields.Char(related='partner_id.email',string="Email")
     advisor_id = fields.Many2one('res.users',string="Advisor",required=True)
-    vechicle_no = fields.Char(string="vechicle no",copy=False,)
-    state = fields.Selection([('draft','draft'),('inprogress','inprogress'),('ready','ready'),('cancelled','cancelled'),('done','done')],string="state",required=True,tracking=True,default="draft")
+    vechicle_no = fields.Char(string="Vechicle No",copy=False,)
+    state = fields.Selection([('draft','Draft'),('inprogress','Inprogress'),('ready','Ready'),('cancelled','Cancelled'),('done','Done')],string="State",required=True,tracking=True,default="draft")
     customer_state=fields.Selection([('nonservice','non service'),('service','service')],string="Customer State",tracking=True,default="nonservice")
     vechicle_image = fields.Image(string="vechicle image",max_width=1920,max_height=1920)
     vechicle_type_id = fields.Many2one('fleet.vehicle.model.category',string="Category",ondelete="set null")
     vehicle_model_id = fields.Many2one('fleet.vehicle.model',string="Vehicle Model")
     service_type = fields.Selection([('option1','free'),('option2','paid')],string="Service Type",required=True)
-    start_date = fields.Date(string="start date",default=fields.Date.today())
+    start_date = fields.Date(string="Start Date",default=fields.Date.today())
     duration = fields.Integer(string="Duration")
     end_date = fields.Date(string="Delivery Date")
     cancelled_date=fields.Date(string="Cancelled date")
     estimated_amount = fields.Float(string="Estimated amount")
     customer_compliant = fields.Text(string="Customer complaint")
-    tag_ids = fields.Many2many('vehicle.tag', string="Tags")
+    tag_ids = fields.Many2many('vehicle.tag', string="Tags",check_company="True")
     company_id = fields.Many2one('res.company',string="Company",default=lambda self: self.env.company,readonly=True)
     name = fields.Char(string='', readonly=True ,default='New')
-    service_tag_ids= fields.Many2many('service.tag',string="service tags")
+    service_tag_ids= fields.Many2many('service.tag',string="Service Tags")
     labor_working_details_ids = fields.One2many('labor.details','labor_details_id')
     employee_assigned_to_labor_id = fields.Many2one('res.users',string="manager of labor")
     consumed_parts_ids= fields.One2many('repair.parts','consumed_parts_id')
     service_history = fields.Char(string="service history",action="action_service_history")
     total = fields.Float(string="Total", compute='total_amount')
     labor_total_amount = fields.Float(string="Total",compute='labor_total')
-    repair_count = fields.Integer(string="repair_count",compute='repair_count_employee')
+    repair_count = fields.Integer(string="Repair Count",compute='repair_count_employee')
     total_sum = fields.Float(string='Amount',compute="sum_of_cost")
     invoice_count = fields.Integer(string="invoices",compute="no_of_invoice")
-    invoice_paid = fields.Selection([('paid','paid'),('unpaid','unpaid')],compute='compute_invoice_paid',widget="ribbon")
+    invoice_paid = fields.Selection([('paid','paid'),('unpaid','Unpaid')],compute='compute_invoice_paid',widget="ribbon")
     active = fields.Boolean(string="Active",default=True)
     invoice_id = fields.Many2one('account.move')
-    sub_total_amount = fields.Float(string="sub total amount", compute='employee_cost')
-    hourly_cost = fields.Float(string="hourly cost of employee")
-    hours_spent = fields.Float(string="hours spent")
+    sub_total_amount = fields.Float(string="Sub Total Amount", compute='employee_cost')
+    hourly_cost = fields.Float(string="Hourly cost of employee")
+    hours_spent = fields.Float(string="Hours spent")
     service_id = fields.Many2one('vechicle.service',string="service")
     delivery_today=fields.Boolean(compute="_compute_delivery_today")
     delivery_tomorrow=fields.Boolean(compute="_compute_delivery_tomorrow")
@@ -51,6 +52,7 @@ class VechicleService(models.Model):
 
     @api.depends('end_date')
     def _compute_delivery_tomorrow(self):
+        """compute tomarrows date for decoration"""
         tomorrow = fields.Date.today() + timedelta(days=1)
         for rec in self:
             rec.delivery_tomorrow=rec.end_date==tomorrow
@@ -59,6 +61,7 @@ class VechicleService(models.Model):
 
     @api.depends('end_date')
     def _compute_delivery_today(self):
+        """use to compute the today's date when showing the decoration danger"""
         today=fields.Date.today()
         for rec in self:
             rec.delivery_today=rec.end_date==today
@@ -75,6 +78,7 @@ class VechicleService(models.Model):
 
 
     def action_ready_for_delivery(self):
+        """change the state to ready when button  ready for delivery clicked """
         self.state='ready'
 
 
@@ -272,6 +276,7 @@ class VechicleService(models.Model):
 
     @api.model
     def compute_delivery_today(self):
+        """this function is used to comppute the deliver date for decoration"""
         today=fields.Date.today()
         for rec in self:
             rec.delivery_date=rec.end_date==today
@@ -294,12 +299,6 @@ class VechicleService(models.Model):
             return res
 
 
-    # @api.model
-    # def change_status(self):
-    #     repairs = self.search([])
-    #     for repair in repairs:
-    #         if repair.partner_id:
-    #             repair.partner_id.customer_state = 'service'
 
 
 

@@ -4,12 +4,12 @@ class LaborDetails(models.Model):
 
     labor_details_id = fields.Many2one('vechicle.service')
     labor_name_id = fields.Many2one('res.partner',string="Labor")
-    employee_assigned_to_labor_id = fields.Many2one('res.users',string="manager of labor")
-    hourly_cost = fields.Float(string="hourly cost of employee")
-    hours_spent = fields.Float(string="hours spent")
-    sub_total_amount = fields.Float(string="sub total amount",compute='employee_cost')
+    employee_assigned_to_labor_id = fields.Many2one('res.users',string="Manager")
+    hourly_cost = fields.Float(string="Hourly Cost")
+    hours_spent = fields.Float(string="Hours Spent")
+    sub_total_amount = fields.Float(string="Sub Total",compute='employee_cost')
     labor_working_details_ids = fields.One2many('labor.details', 'labor_details_id')
-    labor_total_amount = fields.Float(string="total amount")
+    labor_total_amount = fields.Float(string="Total Amount")
 
     # labor_cost_product=fields.Many2one('product.product',string="labor product")
 

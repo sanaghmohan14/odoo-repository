@@ -10,6 +10,7 @@ class ResPartner(models.Model):
     active = fields.Boolean(string="Active")
     customer_state=fields.Selection([('nonservice','non service'),('service','service')],string="Customer State",tracking=True,default="nonservice")
     service_id = fields.Many2one('vechicle.service', string="service")
+    invoice_id = fields.Many2one('account.move')
 
 
 
@@ -38,6 +39,7 @@ class ResPartner(models.Model):
 
 
     def action_create_service(self):
+        """used to create the wizard  in cutomer form"""
         return {
             'type':'ir.actions.act_window',
             'res_model': 'vechicle.service',
@@ -48,14 +50,10 @@ class ResPartner(models.Model):
         }
 
 
-    # def action_customer_archive(self):
-    #     # self.ensure_one()
-    #     self.partner_id.write({'active':False})
-    #     return True
-
 
 
     def write(self,vals):
+        """this function is used to archive """
         res=super().write(vals)
 
         if 'active' in vals and vals['active'] is False:
@@ -66,27 +64,10 @@ class ResPartner(models.Model):
 
 
 
-
-    invoice_id = fields.Many2one('account.move')
-
     def action_invoice(self):
-        print("hello")
         """the action invoice is used to create an invoice"""
         invoice=self.env['account.move'].create({'move_type':'out_invoice','partner_id':self.id})
         self.invoice_id=invoice.id
 
-    #
-    # @api.model
-    # def change_status(self):
-    #     repairs=self.search([])
-    #     for repair in repairs:
-    #         if repair.partner_id:
-    #             repair.partner_id.customer_state='service'
 
-    # @api.model
-    # def change_status(self):
-    #     repairs = self.search([])
-    #     for repair in repairs:
-    #         if repair.service_id:
-    #             repair.service_id.customer_state = 'service'
 
