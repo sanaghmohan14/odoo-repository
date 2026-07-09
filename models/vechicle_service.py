@@ -294,12 +294,12 @@ class VechicleService(models.Model):
             return res
 
 
-    @api.model
-    def change_status(self):
-        repairs = self.search([])
-        for repair in repairs:
-            if repair.partner_id:
-                repair.partner_id.customer_state = 'service'
+    # @api.model
+    # def change_status(self):
+    #     repairs = self.search([])
+    #     for repair in repairs:
+    #         if repair.partner_id:
+    #             repair.partner_id.customer_state = 'service'
 
 
 

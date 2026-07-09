@@ -6,39 +6,35 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
 
-
-
             <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
-
-
 <!--                     <div name="button_box" class="oe_button_box">-->
-                        <button class="oe_stat_button"
+                             <button class="oe_stat_button"
                                 type="object" icon="fa-wrench" name="action_service_history_1">
                             <div class="o_stat_info">
-
-                                 <field name="repairs_count"/>
-                                 <field name="service_historys" widget="statinfo" string="service history"/>
+                                <field name="repairs_count"/>
+                                 <field name="service_historys" widget="statinfo" string="Service History"/>
 
                             </div>
                         </button>
 <!--                        <button name="action_create_service" type="object" string=" create service" ></button>-->
 
 <!--                     </div>-->
-
             </xpath>
 
+            <xpath expr="//div[hasclass('oe_button_box')]" position="after">
 
+                         <form>
 
-                    <xpath expr="//div[hasclass('oe_button_box')]" position="before">
-                        <form>
-                            <header style="width:1100px ; margin-top:1px ">
+                            <header style="width:1160px ; margin-bottom:30px ; background-color:white; margin-top:2px;">
 <!--                                <button name="action_create_service" type="object" string=" create service"  ></button>-->
                                 <button name="%(vechicle_repair_management.create_vechicle_service_wizard)d" type="action" string=" create service"  ></button>
 
                                 <field name="customer_state" widget="statusbar" type="object" options="{'clickable':'1'}" />
 
                             </header>
+
                         </form>
+
 
                     </xpath>
 

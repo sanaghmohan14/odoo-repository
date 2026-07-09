@@ -75,13 +75,13 @@ class ResPartner(models.Model):
         invoice=self.env['account.move'].create({'move_type':'out_invoice','partner_id':self.id})
         self.invoice_id=invoice.id
 
-
-    @api.model
-    def change_status(self):
-        repairs=self.search([])
-        for repair in repairs:
-            if repair.partner_id:
-                repair.partner_id.customer_state='service'
+    #
+    # @api.model
+    # def change_status(self):
+    #     repairs=self.search([])
+    #     for repair in repairs:
+    #         if repair.partner_id:
+    #             repair.partner_id.customer_state='service'
 
     # @api.model
     # def change_status(self):
